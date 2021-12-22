@@ -3,7 +3,6 @@ import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 import CardMatch from './component/cardmatch/Cardmatch'
 import Nav from './component/nav/nav'
-import { ethers } from "ethers";
 
 export default function Home() {
 
@@ -74,16 +73,17 @@ export default function Home() {
   ]
 
   return (
-    <div>
+    <>
       <div>
-        <Nav />
+        <div>
+          <Nav />
+        </div>Î
+        <div className="flex w-full flex-wrap flex-row">
+          {sports.map((sport) => (
+            <CardMatch key={sport.id} sport={sport} />
+          ))}
+        </div>
       </div>
-
-      <div className="flex w-full flex-wrap flex-row">
-        {sports.map((sport) => (
-          <CardMatch key={sport.id} sport={sport} />
-        ))}
-      </div>
-    </div>
+    </>
   )
 }
