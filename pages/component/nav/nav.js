@@ -1,23 +1,25 @@
 import { ethers } from "ethers";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Home from "../..";
 import { AppWrapper, connectToMetamask, log, useAppContext } from "../context/AppContext"
 
 export default function Nav()
 {
-  const { connect, address, etherWeb3, yoTokenContract } = useAppContext();
+  const { connect, address, predicts } = useAppContext();
+  const [users, setUsers] = useState(0);
+  function mintToken()
+  {
+    console.log(predicts);
+  }
+
+  useEffect(() =>
+  {
+    predicts && predicts
+    console.log("Nav : ", predicts[0]);
+  }, [predicts])
+
   function connectToMetamask()
   {
-    console.log("Account : ", address);
-    console.log("yoTokenContract : ", yoTokenContract.name());
-    console.log("getBalance : ", etherWeb3.getBalance("0xa83575490d7df4e2f47b7d38ef351a2722ca45b9"));
-    console.log(etherWeb3.getSigner().getAddress().then((address) =>
-    {
-      console.log("Account Success: ", address);
-    }, () =>
-    {
-      console.log("Account Error: ");
-    }));
     connect()
   }
 

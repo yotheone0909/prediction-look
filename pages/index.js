@@ -13,113 +13,24 @@ export default function Home()
   const sports = [
     {
       id: 1,
-      matchName: "Arsenal vs Sunderland",
+      totalAmount: "Arsenal vs Sunderland",
       homePercentage: "100%",
-      drawPercentage: "25%",
-      awayPercentage: "30%"
-    },
-    {
-      id: 1,
-      matchName: "Arsenal vs Sunderland",
-      homePercentage: "45%",
-      drawPercentage: "25%",
-      awayPercentage: "30%"
-    },
-    {
-      id: 1,
-      matchName: "Arsenal vs Sunderland",
-      homePercentage: "45%",
-      drawPercentage: "25%",
-      awayPercentage: "30%"
-    },
-    {
-      id: 1,
-      matchName: "Arsenal vs Sunderland",
-      homePercentage: "45%",
-      drawPercentage: "25%",
-      awayPercentage: "30%"
-    },
-    {
-      id: 1,
-      matchName: "Arsenal vs Sunderland",
-      homePercentage: "45%",
-      drawPercentage: "25%",
-      awayPercentage: "30%"
-    },
-    {
-      id: 1,
-      matchName: "Arsenal vs Sunderland",
-      homePercentage: "45%",
-      drawPercentage: "25%",
-      awayPercentage: "30%"
-    },
-    {
-      id: 1,
-      matchName: "Arsenal vs Sunderland",
-      homePercentage: "45%",
-      drawPercentage: "25%",
-      awayPercentage: "30%"
-    },
-    {
-      id: 1,
-      matchName: "Arsenal vs Sunderland",
-      homePercentage: "45%",
-      drawPercentage: "25%",
-      awayPercentage: "30%"
-    },
-    {
-      id: 1,
-      matchName: "Arsenal vs Sunderland",
-      homePercentage: "45%",
       drawPercentage: "25%",
       awayPercentage: "30%"
     }
   ]
-
-  const { connect, address, etherWeb3, yoTokenContract, contranctBet } = useAppContext();
-  async function mintToken()
+  const [ users, setUsers ] = useState(0);
+  const { connect, address, predicts } = useAppContext();
+  function mintToken()
   {
-    console.log(await yoTokenContract.owner());
-    // const daiWithSigner = yoTokenContract.connect(etherWeb3.getSigner());
-    // const totaltoken = ethers.utils.parseUnits("10000000000", 18);
-    // daiWithSigner._mint(totaltoken);
-    const match = await contranctBet.getRoundOnRun()
-
-    for (const roundId of match)
-    {
-      console.log(roundId.toString());
-      const matchDetail = await contranctBet.round(roundId.toString())
-      console.log("MatchDetail :", matchDetail)
-    }
-
+    console.log(predicts);
   }
 
-
-  useMemo(async () =>
+  useEffect(() =>
   {
-    console.log("useMemo : ", contranctBet)
-    if (contranctBet == null)
-    {
-      return
-    }
-    getRoundsDetail();
-  }, [yoTokenContract])
-
-
-  async function getRoundsDetail()
-  {
-    const match = await contranctBet.getRoundOnRun()
-    var array = [];
-
-    for (const roundId of match)
-    {
-      console.log(roundId.toString());
-      const matchDetail = await contranctBet.round(roundId.toString())
-      console.log("MatchDetail :", matchDetail)
-      array.push(matchDetail)
-    }
-    console.log("array.length :", array.length)
-  }
+    predicts && predicts
+    console.log("Index : ", predicts[0]);
+  }, [predicts])
 
   return (
     <>
@@ -128,19 +39,20 @@ export default function Home()
           <Nav />
         </div>
         <div className="flex flex-row">
+          {predicts.length}
           <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={() =>
             mintToken()
           }>
             Button
           </button><button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-            Button
+            {predicts.length}
           </button>
         </div>
 
         <div className="flex w-full flex-wrap flex-row">
 
-          {sports.map((sport) => (
-            <CardMatch key={sport.id} sport={sport} />
+          {predicts.map((predict) => (
+            <CardMatch key={predicts[0].timeLockPrediction} predict={predict} />
           ))}
         </div>
       </div>

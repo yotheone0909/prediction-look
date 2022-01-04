@@ -10,6 +10,8 @@ export function AppWrapper({ children })
     const [address, setAddress] = useState(null);
     const [token, setToken] = useState(null);
     const [contranctBet, setContranctBet] = useState(null);
+    const initialValue = [];
+    const [predicts, setPredicts] = useState(initialValue)
     const yoTokenAddress = "0x123a1A265848e6824099240cD244977d539f6df8";
     const daiAbi = [
         {
@@ -1001,12 +1003,14 @@ export function AppWrapper({ children })
             setToken(contract)
             const contractBet = new ethers.Contract(contractBetAddress, contractBetAbi, _etherWeb3)
             setContranctBet(contractBet)
+            getRoundsDetail(contractBet)
         }
 
         ethereum.on("accountsChanged", (addresses) =>
         {
             setAddress(addresses[0])
         })
+        values
     }, [])
 
     const values = useMemo(() =>
@@ -1029,11 +1033,22 @@ export function AppWrapper({ children })
 
             },
             address: address,
-            etherWeb3: etherWeb3,
-            yoTokenContract: token,
-            contranctBet: contranctBet,
+            predicts: predicts
         }
-    }, [address, token, contranctBet])
+    }, [address, token, predicts])
+
+    async function getRoundsDetail(contranctBet)
+    {
+        const match = await contranctBet.getRoundOnRun()
+
+        for (const roundId of match)
+        {
+            const matchDetail = await contranctBet.round(roundId.toString())
+            predicts.push({ timeCreatePrediction: matchDetail.timeCreatePrediction, timeEndPrediction: matchDetail.timeEndPrediction, timeLockPrediction: matchDetail.timeLockPrediction })
+        }
+        setPredicts(predicts)
+        console.log("predicts : ", predicts[0])
+    }
 
     return (
         <AppContext.Provider value={values}>
