@@ -12,12 +12,6 @@ export default function Nav()
     console.log(predicts);
   }
 
-  useEffect(() =>
-  {
-    predicts && predicts
-    console.log("Nav : ", predicts[0]);
-  }, [predicts])
-
   function connectToMetamask()
   {
     connect()

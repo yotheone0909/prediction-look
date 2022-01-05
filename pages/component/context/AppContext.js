@@ -12,7 +12,7 @@ export function AppWrapper({ children })
     const [contranctBet, setContranctBet] = useState(null);
     const initialValue = [];
     const [predicts, setPredicts] = useState(initialValue)
-    const yoTokenAddress = "0x123a1A265848e6824099240cD244977d539f6df8";
+    const yoTokenAddress = "0x163e47bCED7472Df1f97e1F9735521ca694825b9";
     const daiAbi = [
         {
             "inputs": [
@@ -367,7 +367,7 @@ export function AppWrapper({ children })
         }
     ]
 
-    const contractBetAddress = "0x26178103A4129554df4D85b1d381B84af568DfE6";
+    const contractBetAddress = "0xC71f328a0E809C267777ae959d5D080C3b090aEf";
     const contractBetAbi = [
         {
             "inputs": [
@@ -1003,7 +1003,6 @@ export function AppWrapper({ children })
             setToken(contract)
             const contractBet = new ethers.Contract(contractBetAddress, contractBetAbi, _etherWeb3)
             setContranctBet(contractBet)
-            getRoundsDetail(contractBet)
         }
 
         ethereum.on("accountsChanged", (addresses) =>
@@ -1015,6 +1014,7 @@ export function AppWrapper({ children })
 
     const values = useMemo(() =>
     {
+
         return {
             connect: async () =>
             {
@@ -1033,22 +1033,10 @@ export function AppWrapper({ children })
 
             },
             address: address,
-            predicts: predicts
-        }
-    }, [address, token, predicts])
+            contranctBet: contranctBet
 
-    async function getRoundsDetail(contranctBet)
-    {
-        const match = await contranctBet.getRoundOnRun()
-
-        for (const roundId of match)
-        {
-            const matchDetail = await contranctBet.round(roundId.toString())
-            predicts.push({ timeCreatePrediction: matchDetail.timeCreatePrediction, timeEndPrediction: matchDetail.timeEndPrediction, timeLockPrediction: matchDetail.timeLockPrediction })
         }
-        setPredicts(predicts)
-        console.log("predicts : ", predicts[0])
-    }
+    }, [address, token, contranctBet])
 
     return (
         <AppContext.Provider value={values}>

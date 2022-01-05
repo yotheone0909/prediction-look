@@ -20,17 +20,33 @@ export default function Home()
     }
   ]
   const [ users, setUsers ] = useState(0);
-  const { connect, address, predicts } = useAppContext();
+  const { connect, address, contranctBet } = useAppContext();
+  const [ predicts, setPredicts] = useState([])
+
   function mintToken()
   {
-    console.log(predicts);
+    //console.log(predicts);
   }
 
   useEffect(() =>
   {
-    predicts && predicts
-    console.log("Index : ", predicts[0]);
-  }, [predicts])
+
+    const a = async () => {
+      await getRoundsDetail(contranctBet)
+    }
+
+    if ( contranctBet) { a() }
+  }, [contranctBet, connect, address])
+
+  const getRoundsDetail = async (contranctBet) => {
+    const match = await contranctBet.getRoundOnRun()
+    setPredicts([])
+    for (const roundId of match)
+    {
+        const matchDetail = await contranctBet.round(roundId.toString())
+        setPredicts(prevState => [...prevState, { timeCreatePrediction: matchDetail.timeCreatePrediction, timeEndPrediction: matchDetail.timeEndPrediction, timeLockPrediction: matchDetail.timeLockPrediction }])
+    }
+}
 
   return (
     <>
@@ -39,21 +55,17 @@ export default function Home()
           <Nav />
         </div>
         <div className="flex flex-row">
-          {predicts.length}
           <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={() =>
             mintToken()
           }>
             Button
           </button><button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-            {predicts.length}
+            {"ssss"}
           </button>
         </div>
 
         <div className="flex w-full flex-wrap flex-row">
-
-          {predicts.map((predict) => (
-            <CardMatch key={predicts[0].timeLockPrediction} predict={predict} />
-          ))}
+            {predicts.length}
         </div>
       </div>
     </>
