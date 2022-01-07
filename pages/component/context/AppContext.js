@@ -12,7 +12,7 @@ export function AppWrapper({ children })
     const [contranctBet, setContranctBet] = useState(null);
     const initialValue = [];
     const [predicts, setPredicts] = useState(initialValue)
-    const yoTokenAddress = "0x163e47bCED7472Df1f97e1F9735521ca694825b9";
+    const yoTokenAddress = "0x225d2a1e54a1A4cC1E1F1e1eE1756e0b12fD346F";
     const daiAbi = [
         {
             "inputs": [
@@ -367,7 +367,7 @@ export function AppWrapper({ children })
         }
     ]
 
-    const contractBetAddress = "0xC71f328a0E809C267777ae959d5D080C3b090aEf";
+    const contractBetAddress = "0xd9EAa65B4A4653737Ef79BbDf8EF1bb80555f46d";
     const contractBetAbi = [
         {
             "inputs": [
@@ -779,9 +779,61 @@ export function AppWrapper({ children })
             "name": "getRoundOnRun",
             "outputs": [
                 {
-                    "internalType": "uint256[]",
+                    "components": [
+                        {
+                            "internalType": "enum Bet.Position",
+                            "name": "positionWin",
+                            "type": "uint8"
+                        },
+                        {
+                            "internalType": "uint32",
+                            "name": "timeCreatePrediction",
+                            "type": "uint32"
+                        },
+                        {
+                            "internalType": "uint32",
+                            "name": "timeLockPrediction",
+                            "type": "uint32"
+                        },
+                        {
+                            "internalType": "uint32",
+                            "name": "timeEndPrediction",
+                            "type": "uint32"
+                        },
+                        {
+                            "internalType": "uint48",
+                            "name": "homeId",
+                            "type": "uint48"
+                        },
+                        {
+                            "internalType": "uint48",
+                            "name": "awayId",
+                            "type": "uint48"
+                        },
+                        {
+                            "internalType": "uint256",
+                            "name": "amountHome",
+                            "type": "uint256"
+                        },
+                        {
+                            "internalType": "uint256",
+                            "name": "amountAway",
+                            "type": "uint256"
+                        },
+                        {
+                            "internalType": "uint256",
+                            "name": "amountDraw",
+                            "type": "uint256"
+                        },
+                        {
+                            "internalType": "uint256",
+                            "name": "totalAmount",
+                            "type": "uint256"
+                        }
+                    ],
+                    "internalType": "struct Bet.Round[]",
                     "name": "",
-                    "type": "uint256[]"
+                    "type": "tuple[]"
                 }
             ],
             "stateMutability": "view",

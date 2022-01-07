@@ -4,11 +4,13 @@ import Image from 'next/image'
 import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import styles from '../styles/Home.module.css'
 import CardMatch from './component/cardmatch/Cardmatch'
+import Content from './component/Content'
 import { AppWrapper, useAppContext } from './component/context/AppContext'
-import Nav from './component/nav/nav'
+import Nav from './component/nav/Nav'
+import NavContent from './component/nav/NavContent'
+import NavItem from './component/nav/NavItem'
 
-export default function Home()
-{
+export default function Home() {
 
   const sports = [
     {
@@ -19,55 +21,43 @@ export default function Home()
       awayPercentage: "30%"
     }
   ]
-  const [ users, setUsers ] = useState(0);
+  const [users, setUsers] = useState(0);
   const { connect, address, contranctBet } = useAppContext();
-  const [ predicts, setPredicts] = useState([])
+  const [predicts, setPredicts] = useState([])
 
-  function mintToken()
-  {
+  function mintToken() {
     //console.log(predicts);
   }
 
-  useEffect(() =>
-  {
+  useEffect(() => {
 
     const a = async () => {
       await getRoundsDetail(contranctBet)
     }
 
-    if ( contranctBet) { a() }
+    if (contranctBet) { a() }
   }, [contranctBet, connect, address])
 
   const getRoundsDetail = async (contranctBet) => {
-    const match = await contranctBet.getRoundOnRun()
+    const matchs = await contranctBet.getRoundOnRun()
+    console.log(matchs)
     setPredicts([])
-    for (const roundId of match)
-    {
-        const matchDetail = await contranctBet.round(roundId.toString())
-        setPredicts(prevState => [...prevState, { timeCreatePrediction: matchDetail.timeCreatePrediction, timeEndPrediction: matchDetail.timeEndPrediction, timeLockPrediction: matchDetail.timeLockPrediction }])
+    for (const matchDetail of matchs) {
+      setPredicts(prevState => [...prevState, { timeCreatePrediction: matchDetail.timeCreatePrediction, timeEndPrediction: matchDetail.timeEndPrediction, timeLockPrediction: matchDetail.timeLockPrediction }])
     }
-}
+  }
 
   return (
     <>
-      <div>
-        <div>
-          <Nav />
-        </div>
-        <div className="flex flex-row">
-          <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={() =>
-            mintToken()
-          }>
-            Button
-          </button><button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-            {"ssss"}
-          </button>
-        </div>
-
-        <div className="flex w-full flex-wrap flex-row">
-            {predicts.length}
-        </div>
-      </div>
+      <Nav />
+      <Content>
+      <NavContent>
+          <NavItem href="/new" isActive>New Releases</NavItem>
+          <NavItem href="/top">Top Rated</NavItem>
+          <NavItem href="/picks">Vincent’s Picks</NavItem>
+        </NavContent>
+        <CardMatch/>
+      </Content>
     </>
   )
 }
