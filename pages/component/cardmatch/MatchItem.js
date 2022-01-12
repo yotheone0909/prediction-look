@@ -1,8 +1,63 @@
-export default function MatchItem() {
+import { useEffect, useState } from "react"
+import ReComfirmModal from "../modal/ReComfirmModal"
+
+export default function MatchItem({ predictionModel }) {
+
+    const [isLive, setIsLive] = useState(false)
+    const [isMatchEnd, setIsMatchEnd] = useState(false)
+
+    useEffect(() => {
+
+        const dateNow = new Date();
+        const epoch = dateNow.getTime() / 1000.0;
+        setIsLive(epoch >= predictionModel?.timeLockPrediction)
+
+        setIsMatchEnd(epoch >= predictionModel?.timeEndPrediction)
+
+    }, [isLive, isMatchEnd])
+
+    function getDateMatch() {
+        if (predictionModel != null) {
+            const myDate = new Date(predictionModel?.timeLockPrediction * 1000)
+            return myDate.toLocaleString()
+        }
+    }
+
+    function getPercentage(amount) {
+        if (predictionModel != null) {
+            const totalPredict = predictionModel.amountHome + predictionModel.amountAway + predictionModel.amountDraw;
+            return totalPredict <= 0 ? 0 : (amount / totalPredict) * 100
+        }
+    }
+
+    function getWinner() {
+        if (predictionModel != null) {
+            if (predictionModel.positionWin == 0) {
+                return "Waiting Result"
+            } else if (positionWin == 1) {
+                return "Home Win"
+            } else if (positionWin == 2) {
+                return "Away Win"
+            } else if (positionWin == 3) {
+                return "Draw"
+            } else {
+                return "Refund"
+            }
+        }
+    }
+
+    console.log("isLive", isLive)
+    console.log("isMatchEnd", isMatchEnd)
+
     return (
-            <div className="max-w-sm rounded overflow-hidden shadow-lg bg-white">
+        <>
+            <div className={(isMatchEnd ? "opacity-25" : "") + " max-w-sm rounded-[14px] overflow-hidden shadow-lg shadow-indigo-500/40  bg-white px-4"}>
                 <div className="flex flex-row">
-                    <h1>Live in </h1>
+                    {isMatchEnd ? <blockquote class="md:opacity-100 text-2xl font-semibold italic text-center text-gray-900">
+                        <span class="before:block before:absolute before:-inset-1 before:-skew-y-3 before:bg-pink-500 relative inline-block">
+                            <span class="relative text-white">{getWinner()}</span>
+                        </span>
+                    </blockquote> : isLive ? <div class="rounded-md bg-rose-600 mt-2 px-2 py-1 mb-2 text-white">Live</div> : <h1>Live in {getDateMatch()}</h1>}
                 </div>
                 <div className="flex flex-row">
                     <div className="basis-1/3">
@@ -33,12 +88,12 @@ export default function MatchItem() {
                         </div>
                         <div className="text-right">
                             <span className="text-xs font-semibold inline-block text-pink-600">
-                                30%
+                                {getPercentage(predictionModel.amountHome)}%
                             </span>
                         </div>
                     </div>
                     <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-pink-200">
-                        <div style={{ width: "30%" }} className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-pink-500"></div>
+                        <div style={{ width: getPercentage(predictionModel.amountHome) }} className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-pink-500"></div>
                     </div>
                 </div>
                 <div className="relative pt-1">
@@ -50,12 +105,12 @@ export default function MatchItem() {
                         </div>
                         <div className="text-right">
                             <span className="text-xs font-semibold inline-block text-pink-600">
-                                30%
+                                {getPercentage(predictionModel.amountDraw)}%
                             </span>
                         </div>
                     </div>
                     <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-pink-200">
-                        <div style={{ width: "30%" }} className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-pink-500"></div>
+                        <div style={{ width: getPercentage(predictionModel.amountDraw) }} className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-pink-500"></div>
                     </div>
                 </div>
                 <div className="relative pt-1">
@@ -67,15 +122,15 @@ export default function MatchItem() {
                         </div>
                         <div className="text-right">
                             <span className="text-xs font-semibold inline-block text-pink-600">
-                                30%
+                                {getPercentage(predictionModel.amountAway)}%
                             </span>
                         </div>
                     </div>
                     <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-pink-200">
-                        <div style={{ width: "30%" }} className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-pink-500"></div>
+                        <div style={{ width: getPercentage(predictionModel.amountAway) }} className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-pink-500"></div>
                     </div>
                 </div>
-                <form className="bg-white rounded px-2 pt-2 pb-2">
+                <form className=" rounded px-2 pt-2 pb-2">
                     <div className="mb-4">
                         <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="username">
                             Amount (BUSD)
@@ -86,21 +141,22 @@ export default function MatchItem() {
 
                 <div className="basis-1/3 grid grid-cols-3 content-center mb-2">
                     <div>
-                        <button className="basis-1/3 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                        <button className={(isLive || isMatchEnd ? "cursor-not-allowed " : "") + "basis-1/3 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"}>
                             Home
                         </button>
                     </div>
                     <div>
-                        <button className="basis-1/3 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                        <button className={(isLive || isMatchEnd ? "cursor-not-allowed " : "") + "basis-1/3 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"}>
                             Draw
                         </button>
                     </div>
                     <div>
-                        <button className="basis-1/3 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                        <button className={(isLive || isMatchEnd ? "cursor-not-allowed " : "") + "basis-1/3 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"}>
                             Away
                         </button>
                     </div>
                 </div>
             </div>
+        </>
     )
 }

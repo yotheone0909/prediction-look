@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Prediction from "../../model/Prediction";
 import { useAppContext } from "../context/AppContext";
 import MatchItem from "./MatchItem";
 
@@ -54,26 +55,39 @@ export default function CardMatch() {
 
     useEffect(() => {
 
-        // const a = async () => {
-        //   await getRoundsDetail(contranctBet)
-        // }
+        const a = async () => {
+            await getRoundsDetail(contranctBet)
+        }
 
-        // if (contranctBet) { a() }
+        if (contranctBet) { a() }
     }, [contranctBet, connect, address])
 
     const getRoundsDetail = async (contranctBet) => {
         const matchs = await contranctBet.getRoundOnRun()
         console.log(matchs)
         setPredicts([])
-        for (const matchDetail of matchs) {
-            setPredicts(prevState => [...prevState, { timeCreatePrediction: matchDetail.timeCreatePrediction, timeEndPrediction: matchDetail.timeEndPrediction, timeLockPrediction: matchDetail.timeLockPrediction }])
+        for (let [index, matchDetail]  of matchs.entries()) {
+            setPredicts(prevState => [...prevState, new Prediction(
+                index,
+                matchDetail.homeId,
+                matchDetail.awayId,
+                matchDetail.amountHome,
+                matchDetail.amountAway,
+                matchDetail.amountDraw,
+                matchDetail.timeCreatePrediction,
+                matchDetail.timeEndPrediction,
+                matchDetail.timeLockPrediction,
+                matchDetail.positionWin)])
         }
     }
+
     return (
-        <div className="grid grid-cols-4 gap-4 shadow-md">
-            {sports.map((sport) => (
-                <MatchItem />
-            ))}
-        </div>
+        <>
+            <div className="grid grid-cols-4 gap-4 shadow-md">
+                {predicts?.map((predict) => (
+                    <MatchItem key={predict.id} predictionModel={predict} />
+                ))}
+            </div>
+        </>
     )
 }
