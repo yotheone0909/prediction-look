@@ -11,9 +11,6 @@ import NavContent from './component/nav/NavContent'
 import NavItem from './component/nav/NavItem'
 
 export default function Home() {
-
-  const [users, setUsers] = useState(0);
-
   return (
     <>
       <Nav />

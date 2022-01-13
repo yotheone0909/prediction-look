@@ -8,65 +8,21 @@ export default function CardMatch() {
     const { connect, address, contranctBet } = useAppContext();
     const [predicts, setPredicts] = useState([])
 
-    const sports = [
-        {
-            id: 1,
-            totalAmount: "Arsenal vs Sunderland",
-            homePercentage: "100%",
-            drawPercentage: "25%",
-            awayPercentage: "30%"
-        },
-        {
-            id: 1,
-            totalAmount: "Arsenal vs Sunderland",
-            homePercentage: "100%",
-            drawPercentage: "25%",
-            awayPercentage: "30%"
-        },
-        {
-            id: 1,
-            totalAmount: "Arsenal vs Sunderland",
-            homePercentage: "100%",
-            drawPercentage: "25%",
-            awayPercentage: "30%"
-        },
-        {
-            id: 1,
-            totalAmount: "Arsenal vs Sunderland",
-            homePercentage: "100%",
-            drawPercentage: "25%",
-            awayPercentage: "30%"
-        },
-        {
-            id: 1,
-            totalAmount: "Arsenal vs Sunderland",
-            homePercentage: "100%",
-            drawPercentage: "25%",
-            awayPercentage: "30%"
-        },
-        {
-            id: 1,
-            totalAmount: "Arsenal vs Sunderland",
-            homePercentage: "100%",
-            drawPercentage: "25%",
-            awayPercentage: "30%"
-        }
-    ]
-
     useEffect(() => {
 
         const a = async () => {
-            await getRoundsDetail(contranctBet)
-        }
+        await getRoundsDetail()
+    }
 
         if (contranctBet) { a() }
-    }, [contranctBet, connect, address])
+}, [contranctBet, connect, address])
 
-    const getRoundsDetail = async (contranctBet) => {
+const getRoundsDetail = async () => {
+    
         const matchs = await contranctBet.getRoundOnRun()
         console.log(matchs)
         setPredicts([])
-        for (let [index, matchDetail]  of matchs.entries()) {
+        for (let [index, matchDetail] of matchs.entries()) {
             setPredicts(prevState => [...prevState, new Prediction(
                 index,
                 matchDetail.homeId,
@@ -83,11 +39,11 @@ export default function CardMatch() {
 
     return (
         <>
-            <div className="grid grid-cols-4 gap-4 shadow-md">
-                {predicts?.map((predict) => (
-                    <MatchItem key={predict.id} predictionModel={predict} />
-                ))}
-            </div>
+            ssName="grid grid-cols-4 gap-4 shadow-md">
+                 {predicts?.map((predict) => (
+                <MatchItem key={predict.id} predictionModel={predict} getRoundsDetailFn={getRoundsDetail} />
+            ))}
+        </div>
         </>
-    )
+    ) 
 }

@@ -1,10 +1,41 @@
 import { useEffect, useState } from "react"
-import ReComfirmModal from "../modal/ReComfirmModal"
 
-export default function MatchItem({ predictionModel }) {
+export default function MatchItem({ predictionModel,  getRoundsDetailFn}) {
 
     const [isLive, setIsLive] = useState(false)
     const [isMatchEnd, setIsMatchEnd] = useState(false)
+    const [count, setCount] = useState(900); // seconds
+    const [hour, setHour] = useState(0);
+    const [minute, setMinute] = useState(0);
+    const [second, setSecond] = useState(0);
+
+    function secondsToTime(secs) {
+        var hours = Math.floor(secs / (60 * 60));
+        var divisor_for_minutes = secs % (60 * 60);
+        var minutes = Math.floor(divisor_for_minutes / 60);
+        var divisor_for_seconds = divisor_for_minutes % 60;
+        var seconds = Math.ceil(divisor_for_seconds);
+        return {
+            h: hours,
+            m: minutes,
+            s: seconds
+        };
+    }
+    useEffect(() => {
+        if (count >= 0) {
+            const secondsLeft = setInterval(() => {
+                setCount((c) => c - 1);
+                let timeLeftVar = secondsToTime(count);
+                setHour(timeLeftVar.h);
+                setMinute(timeLeftVar.m);
+                setSecond(timeLeftVar.s);
+            }, 1000);
+            return () => clearInterval(secondsLeft);
+        } else {
+            console.log("timeout");
+            getRoundsDetailFn()
+        }
+    }, [count]);
 
     useEffect(() => {
 
@@ -34,11 +65,11 @@ export default function MatchItem({ predictionModel }) {
         if (predictionModel != null) {
             if (predictionModel.positionWin == 0) {
                 return "Waiting Result"
-            } else if (positionWin == 1) {
+            } else if (ppredictionModel.positionWin == 1) {
                 return "Home Win"
-            } else if (positionWin == 2) {
+            } else if (predictionModel.positionWin == 2) {
                 return "Away Win"
-            } else if (positionWin == 3) {
+            } else if (predictionModel.positionWin == 3) {
                 return "Draw"
             } else {
                 return "Refund"
@@ -46,11 +77,12 @@ export default function MatchItem({ predictionModel }) {
         }
     }
 
-    console.log("isLive", isLive)
-    console.log("isMatchEnd", isMatchEnd)
-
     return (
         <>
+        <h1 className="text-white">
+        {hour < 9 ? "0" + hour : hour} : {minute < 9 ? "0" + minute : minute} :
+        {second < 9 ? "0" + second : second}
+      </h1>
             <div className={(isMatchEnd ? "opacity-25" : "") + " max-w-sm rounded-[14px] overflow-hidden shadow-lg shadow-indigo-500/40  bg-white px-4"}>
                 <div className="flex flex-row">
                     {isMatchEnd ? <blockquote class="md:opacity-100 text-2xl font-semibold italic text-center text-gray-900">
@@ -135,7 +167,7 @@ export default function MatchItem({ predictionModel }) {
                         <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="username">
                             Amount (BUSD)
                         </label>
-                        <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="BUSD" />
+                        <input disabled={isLive || isMatchEnd} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="BUSD" />
                     </div>
                 </form>
 
