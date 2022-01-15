@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { contractBetAbi, contractBetAddress, daiAbi, yoTokenAddress } from "../constants/constants";
+import { contractBetAbi, contractBetAddress, tokenAbi, yoTokenAddress } from "../constants/constants";
 
 const AppContext = createContext({});
 
@@ -9,11 +9,9 @@ export function AppWrapper({ children })
 
     const [etherWeb3, setEtherWeb3] = useState(null);
     const [address, setAddress] = useState(null);
-    const [token, setToken] = useState(null);
+    const [tokenBusd, setTokenBusd] = useState(null);
     const [contranctBet, setContranctBet] = useState(null);
-    const initialValue = [];
-    const [predicts, setPredicts] = useState(initialValue)
-    
+    const [signer, setSigner] = useState(null)
 
     useEffect(async () =>
     {
@@ -23,9 +21,10 @@ export function AppWrapper({ children })
             setEtherWeb3(_etherWeb3);
             let addresses = await _etherWeb3.listAccounts();
             setAddress(addresses[0])
+            setSigner(_etherWeb3.getSigner())
             
-            const contract = new ethers.Contract(yoTokenAddress, daiAbi, _etherWeb3)
-            setToken(contract)
+            const contract = new ethers.Contract(yoTokenAddress, tokenAbi, _etherWeb3)
+            setTokenBusd(contract)
             const contractBet = new ethers.Contract(contractBetAddress, contractBetAbi, _etherWeb3)
             setContranctBet(contractBet)
         }
@@ -57,11 +56,13 @@ export function AppWrapper({ children })
                 }
 
             },
+            signer: signer,
             address: address,
-            contranctBet: contranctBet
+            contranctBet: contranctBet,
+            tokenBusd: tokenBusd
 
         }
-    }, [address, token, contranctBet])
+    }, [address, tokenBusd, contranctBet])
 
     return (
         <AppContext.Provider value={values}>
