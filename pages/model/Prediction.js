@@ -1,8 +1,8 @@
 export default class Prediction
 {
-    constructor(id,homeId, awayId,amountHome, amountAway,amountDraw, timeCreatePrediction, timeEndPrediction, timeLockPrediction, positionWin)
+    constructor(roundId,homeId, awayId,amountHome, amountAway,amountDraw, timeCreatePrediction, timeEndPrediction, timeLockPrediction, positionWin)
     {
-        this.id = id
+        this.roundId = roundId
         this.homeId = homeId;
         this.awayId = awayId;
         this.amountHome = amountHome;

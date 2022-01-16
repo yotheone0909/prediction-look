@@ -9,25 +9,36 @@ export default function CardMatch() {
     const epoch = dateNow.getTime() / 1000.0;
     const { connect, address, contranctBet } = useAppContext();
     const [predicts, setPredicts] = useState([])
+    const [roundIds, setRoundIds] = useState([])
 
     useEffect(() => {
 
-        const a = async () => {
+        const callRound = async () => {
             await getRoundsDetail()
         }
 
-        if (contranctBet) { a() }
+        if (contranctBet) { callRound() }
     }, [contranctBet, connect, address])
 
+    useEffect(() => {
+        const callMatchRoundId = async() => await getMatchRoundId()
+        if (contranctBet) {
+            callMatchRoundId()
+        }
+    }, [contranctBet])
+
     const getRoundsDetail = async () => {
-        console.log("getRoundsDetail")
         const matchs = await contranctBet.getRoundOnRun()
+
+        const matchRounds = await contranctBet.getUserRound(address)
+
+        console.log("matchRounds123", matchRounds.toString())
         if (matchs.length != predicts.length) {
             setPredicts([])
             const preditcsNew = []
             for (let [index, matchDetail] of matchs.entries()) {
                 preditcsNew = [...preditcsNew, new Prediction(
-                    index,
+                    matchDetail.roundId.toString(),
                     matchDetail.homeId.toString(),
                     matchDetail.awayId.toString(),
                     parseInt(utils.formatEther(matchDetail.amountHome.toString())),
@@ -47,11 +58,20 @@ export default function CardMatch() {
         }
     }
 
+    const getMatchRoundId = async() => {
+        const matchRounds = await contranctBet.getUserRound(address)
+        const rounds = []
+        for(var i = 0; i < matchRounds.length; i++) {
+            rounds = [...rounds, matchRounds[i].toString()]
+        }
+        setRoundIds(rounds)
+    }
+
     return (
         <>
             <div className="grid grid-cols-4 gap-4 shadow-md">
                 {predicts?.map((predict) => (
-                    <MatchItem key={predict.id} predictionModel={predict} getRoundsDetailFn={getRoundsDetail} />
+                    <MatchItem key={predict.roundId} predictionModel={predict} getRoundsDetailFn={getRoundsDetail} matchRoundIds={roundIds} />
                 ))}
             </div>
         </>

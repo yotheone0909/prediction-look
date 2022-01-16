@@ -3,7 +3,7 @@ import { contractBetAddress } from "../constants/constants";
 import { useAppContext } from "../context/AppContext";
 import { utils } from "ethers";
 
-export default function MatchItem({ predictionModel, getRoundsDetailFn }) {
+export default function MatchItem({ predictionModel, getRoundsDetailFn , matchRoundIds}) {
     const { address, tokenBusd, contranctBet, signer } = useAppContext();
     const dateNow = new Date();
     const epoch = dateNow.getTime() / 1000.0;
@@ -99,7 +99,8 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn }) {
             let connectContractBet = contranctBet.connect(signer)
             console.log("connectContractBet", connectContractBet)
             const amountWei = utils.parseEther(amount);
-            await connectContractBet?.predictionHome("1", amountWei)
+            console.log("predictionModel.roundId", predictionModel.roundId)
+            await connectContractBet?.predictionHome(predictionModel.roundId, amountWei)
                 .then(value => {
                     console.log("predictionHome Success", value)
                 })
@@ -284,6 +285,8 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn }) {
                 {isApprove ? htmlInputAmount : ""}
 
                 {isApprove ? htmlButtonPredict : htmlButtonApprove}
+
+                {matchRoundIds.includes(predictionModel.roundId) ? "Yes" : "No"}
 
             </div>
         </>
