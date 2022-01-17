@@ -2,8 +2,9 @@ import { useEffect, useRef, useState } from "react"
 import { contractBetAddress } from "../constants/constants";
 import { useAppContext } from "../context/AppContext";
 import { utils } from "ethers";
+import UserPrediction from "../../model/UserPrediction";
 
-export default function MatchItem({ predictionModel, getRoundsDetailFn , matchRoundIds}) {
+export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRoundIds }) {
     const { address, tokenBusd, contranctBet, signer } = useAppContext();
     const dateNow = new Date();
     const epoch = dateNow.getTime() / 1000.0;
@@ -18,11 +19,26 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn , matchRo
     const [isApprove, setIsApprove] = useState(false)
     const [amount, setAmount] = useState(0)
     const [amountAllow, setAmountAllow] = useState(0)
+    const [userPrediction, setUserPrediction] = useState(null)
     const textAmount = useRef(null);
 
     useEffect(() => {
 
-    }, [signer])
+        const prediction = async () => {
+            let connectContractBet = contranctBet.connect(signer)
+            let dataUserPrefiction = await connectContractBet.userPrediction(predictionModel.roundId, address)
+            let userNewPrediction = new UserPrediction(
+                dataUserPrefiction.roundId.toString(),
+                dataUserPrefiction.positionPredict.toString(),
+                parseInt(utils.formatEther(dataUserPrefiction.amount.toString())),
+                dataUserPrefiction.isClaimed
+            )
+            setUserPrediction(userNewPrediction)
+        }
+        if (contranctBet) {
+            prediction()
+        }
+    }, [])
 
     useEffect(() => {
 
@@ -121,6 +137,26 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn , matchRo
         }
     }
 
+    const getUserPrediction = async (roundId) => {
+        if (roundId) {
+            let connectContractBet = contranctBet.connect(signer)
+            await connectContractBet.userPrediction(roundId, address).then(prediction => {
+                let userNewPrediction = new UserPrediction(
+                    prediction.roundId.toString(),
+                    prediction.positionPredict.toString(),
+                    parseInt(utils.formatEther(prediction.amount.toString())),
+                    prediction.isClaimed
+                )
+                console.log("userPrediction", userNewPrediction);
+                setUserPrediction(userNewPrediction)
+            })
+                .catch(err => {
+                    console.log("userPrediction", err)
+                })
+        }
+
+    }
+
     function secondsToTime(secs) {
         var hours = Math.floor(secs / (60 * 60));
         var divisor_for_minutes = secs % (60 * 60);
@@ -157,6 +193,9 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn , matchRo
         }
     }
     const handleBtnClick = () => {
+        if (matchRoundIds.includes(predictionModel.roundId)) {
+            return
+        }
         if (textAmount.current.value < 1) {
             textAmount.current.focus();
         } else {
@@ -164,23 +203,20 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn , matchRo
         }
     };
 
-    const htmlButtonPredict = <div className="basis-1/3 grid grid-cols-3 content-center mb-2">
-        <div>
-            <button className={(isLive || isMatchEnd ? "cursor-not-allowed " : "") + "basis-1/3 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"} onClick={handleBtnClick}>
+    const htmlButtonPredict = <>
+        {matchRoundIds.includes(predictionModel.roundId) ? <div className="grid grid-cols-3 text-center gap-4"><p className="text-black font-bold rounded">{userPrediction?.positionPredict == 1 ? "Home" : ""}</p><p className="text-black font-bold rounded">{userPrediction?.positionPredict == 3 ? "Draw" : ""}</p><p className="text-black font-bold rounded">{userPrediction?.positionPredict == 2 ? "Away" : ""}</p></div> : ""}
+        <div className={(matchRoundIds.includes(predictionModel.roundId) ? "opacity-25 " : "") + "basis-1/3 grid grid-cols-3 content-center mb-2 gap-4"}>
+            <button className={((isLive || isMatchEnd || matchRoundIds.includes(predictionModel.roundId)) ? "cursor-not-allowed " : "") + "basis-1/3 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"} onClick={handleBtnClick}>
                 Home
             </button>
-        </div>
-        <div>
-            <button className={(isLive || isMatchEnd ? "cursor-not-allowed " : "") + "basis-1/3 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"}>
+            <button className={((isLive || isMatchEnd || matchRoundIds.includes(predictionModel.roundId)) ? "cursor-not-allowed " : "") + "basis-1/3 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"}>
                 Draw
             </button>
-        </div>
-        <div>
-            <button className={(isLive || isMatchEnd ? "cursor-not-allowed " : "") + "basis-1/3 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"}>
+            <button className={((isLive || isMatchEnd || matchRoundIds.includes(predictionModel.roundId)) ? "cursor-not-allowed " : "") + "basis-1/3 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"}>
                 Away
             </button>
         </div>
-    </div>
+    </>
 
     const htmlButtonApprove = <div>
         <button className="w-full mb-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={() => {
@@ -285,8 +321,6 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn , matchRo
                 {isApprove ? htmlInputAmount : ""}
 
                 {isApprove ? htmlButtonPredict : htmlButtonApprove}
-
-                {matchRoundIds.includes(predictionModel.roundId) ? "Yes" : "No"}
 
             </div>
         </>
