@@ -192,6 +192,99 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
             }
         }
     }
+
+    function showSelectedTeam() {
+        let result;
+        if (matchRoundIds.includes(predictionModel.roundId)) {
+            if (userPrediction?.positionPredict == 1) {
+                result =
+                    <div class="flex flex-row gap-4 mb-2">
+                        <div class="flex bg-emerald-300 border-solid border-2 border-red-700 basis-1/2 rounded-full">
+                            <div class="flex-none">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /> </svg>
+                            </div>
+                            <div class="grow">
+                                Entered
+                            </div>
+                        </div>
+                        <div class="flex basis-1/2 rounded-full">
+                            <div class="flex-none">
+
+                            </div>
+                            <div class="grow">
+
+                            </div>
+                        </div>
+                        <div class="flex basis-1/2 rounded-full">
+                            <div class="flex-none">
+
+                            </div>
+                            <div class="grow">
+
+                            </div>
+                        </div>
+                    </div>
+            } else if (userPrediction?.positionPredict == 2) {
+                result = <div class="flex flex-row gap-4 mb-2">
+                    <div class="flex basis-1/2 rounded-full">
+                        <div class="flex-none">
+
+                        </div>
+                        <div class="grow">
+
+                        </div>
+                    </div>
+                    <div class="flex basis-1/2 rounded-full">
+                        <div class="flex-none">
+
+                        </div>
+                        <div class="grow">
+
+                        </div>
+                    </div>
+                    <div class="flex bg-emerald-300 border-solid border-2 border-red-700 basis-1/2 rounded-full">
+                        <div class="flex-none">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /> </svg>
+                        </div>
+                        <div class="grow">
+                            Entered
+                        </div>
+                    </div>
+                </div>
+            } else if (userPrediction?.positionPredict == 3) {
+                result = <div class="flex flex-row gap-4 mb-2">
+                <div class="flex basis-1/2 rounded-full">
+                    <div class="flex-none">
+
+                    </div>
+                    <div class="grow">
+
+                    </div>
+                </div>
+                <div class="flex bg-emerald-300 border-solid border-2 border-red-700 basis-1/2 rounded-full">
+                    <div class="flex-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /> </svg>
+                    </div>
+                    <div class="grow">
+                        Entered
+                    </div>
+                </div>
+                <div class="flex basis-1/2 rounded-full">
+                    <div class="flex-none">
+
+                    </div>
+                    <div class="grow">
+
+                    </div>
+                </div>
+            </div>
+            }
+        } else {
+            result = ""
+        }
+        return result;
+    }
+
     const handleBtnClick = () => {
         if (matchRoundIds.includes(predictionModel.roundId)) {
             return
@@ -203,8 +296,9 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
         }
     };
 
+
     const htmlButtonPredict = <>
-        {matchRoundIds.includes(predictionModel.roundId) ? <div className="grid grid-cols-3 text-center gap-4"><p className="text-black font-bold rounded">{userPrediction?.positionPredict == 1 ? "Home" : ""}</p><p className="text-black font-bold rounded">{userPrediction?.positionPredict == 3 ? "Draw" : ""}</p><p className="text-black font-bold rounded">{userPrediction?.positionPredict == 2 ? "Away" : ""}</p></div> : ""}
+        {showSelectedTeam()}
         <div className={(matchRoundIds.includes(predictionModel.roundId) ? "opacity-25 " : "") + "basis-1/3 grid grid-cols-3 content-center mb-2 gap-4"}>
             <button className={((isLive || isMatchEnd || matchRoundIds.includes(predictionModel.roundId)) ? "cursor-not-allowed " : "") + "basis-1/3 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"} onClick={handleBtnClick}>
                 Home
