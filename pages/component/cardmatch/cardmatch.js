@@ -33,7 +33,7 @@ export default function CardMatch() {
         const matchRounds = await contranctBet.getUserRound(address)
 
         console.log("matchRounds123", matchRounds.toString())
-        if (matchs.length != predicts.length) {
+
             setPredicts([])
             const preditcsNew = []
             for (let [index, matchDetail] of matchs.entries()) {
@@ -44,6 +44,7 @@ export default function CardMatch() {
                     parseInt(utils.formatEther(matchDetail.amountHome.toString())),
                     parseInt(utils.formatEther(matchDetail.amountAway.toString())),
                     parseInt(utils.formatEther(matchDetail.amountDraw.toString())),
+                    parseInt(utils.formatEther(matchDetail.totalAmount.toString())),
                     matchDetail.timeCreatePrediction.toString(),
                     matchDetail.timeEndPrediction.toString(),
                     matchDetail.timeLockPrediction.toString(),
@@ -55,7 +56,7 @@ export default function CardMatch() {
             });
 
             setPredicts(predicsSort)
-        }
+
     }
 
     const getMatchRoundId = async() => {

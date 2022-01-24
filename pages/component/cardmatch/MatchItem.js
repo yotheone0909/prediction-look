@@ -3,6 +3,7 @@ import { contractBetAddress } from "../constants/constants";
 import { useAppContext } from "../context/AppContext";
 import { utils } from "ethers";
 import UserPrediction from "../../model/UserPrediction";
+import { Router } from "next/router";
 
 export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRoundIds }) {
     const { address, tokenBusd, contranctBet, signer } = useAppContext();
@@ -20,9 +21,12 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
     const [amount, setAmount] = useState(0)
     const [amountAllow, setAmountAllow] = useState(0)
     const [userPrediction, setUserPrediction] = useState(null)
+    const [totalAmount , setTotalAmount] = useState(predictionModel.totalAmount ? 0 : predictionModel.totalAmount)
     const textAmount = useRef(null);
 
     useEffect(() => {
+
+        console.log("userPrediction")
 
         const prediction = async () => {
             let connectContractBet = contranctBet.connect(signer)
@@ -38,7 +42,7 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
         if (contranctBet) {
             prediction()
         }
-    }, [])
+    }, [totalAmount])
 
     useEffect(() => {
 
@@ -103,6 +107,7 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
         let contract = tokenBusd.connect(signer)
         await contract?.approve(contractBetAddress, wei).then(approved => {
             setIsApprove(approved)
+            Router.reload()
         }).catch(err => {
             console.log("approve", err)
         })
@@ -110,7 +115,7 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
 
     const predictionHome = async (amount) => {
         console.log("predictionHome")
-        if (amountAllow > amount) {
+        if (parseInt(amountAllow) > parseInt(amount)) {
             console.log("amountAllow > amount")
             let connectContractBet = contranctBet.connect(signer)
             console.log("connectContractBet", connectContractBet)
@@ -118,6 +123,67 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
             console.log("predictionModel.roundId", predictionModel.roundId)
             await connectContractBet?.predictionHome(predictionModel.roundId, amountWei)
                 .then(value => {
+                    location.reload()
+                    console.log("predictionHome Success", value)
+                })
+                .catch(err => {
+                    console.log("predictionHome Error", err)
+                })
+
+        } else {
+            let contract = tokenBusd.connect(signer)
+            const amountWei = utils.parseEther(amount);
+            await contract?.increaseAllowance(contractBetAddress, amountWei).then(added => {
+                if (added) {
+                    checkAllowance()
+                }
+            }).catch(err => {
+                console.log("increaseAllowance", err)
+            })
+        }
+    }
+
+    const predictionDraw = async (amount) => {
+        console.log("predictionHome")
+        if (parseInt(amountAllow) > parseInt(amount)) {
+            console.log("amountAllow > amount")
+            let connectContractBet = contranctBet.connect(signer)
+            console.log("connectContractBet", connectContractBet)
+            const amountWei = utils.parseEther(amount);
+            console.log("predictionModel.roundId", predictionModel.roundId)
+            await connectContractBet?.predictionDraw(predictionModel.roundId, amountWei)
+                .then(value => {
+                    location.reload()
+                    console.log("predictionHome Success", value)
+                })
+                .catch(err => {
+                    console.log("predictionHome Error", err)
+                })
+
+        } else {
+            let contract = tokenBusd.connect(signer)
+            const amountWei = utils.parseEther(amount);
+            await contract?.increaseAllowance(contractBetAddress, amountWei).then(added => {
+                if (added) {
+                    checkAllowance()
+                }
+            }).catch(err => {
+                console.log("increaseAllowance", err)
+            })
+        }
+    }
+
+    const predictionAway = async (amount) => {
+        console.log("predictionHome")
+        if (parseInt(amountAllow) > parseInt(amount)) {
+            console.log("amountAllow > amount")
+            let connectContractBet = contranctBet.connect(signer)
+            console.log("connectContractBet", connectContractBet)
+            const amountWei = utils.parseEther(amount);
+            console.log("predictionModel.roundId", predictionModel.roundId)
+            await connectContractBet?.predictionAway(predictionModel.roundId, amountWei)
+                .then(value => {
+                    location.reload()
                     console.log("predictionHome Success", value)
                 })
                 .catch(err => {
@@ -285,7 +351,7 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
         return result;
     }
 
-    const handleBtnClick = () => {
+    const handleBtnHomeClick = () => {
         if (matchRoundIds.includes(predictionModel.roundId)) {
             return
         }
@@ -296,17 +362,39 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
         }
     };
 
+    const handleBtnDrawClick = () => {
+        if (matchRoundIds.includes(predictionModel.roundId)) {
+            return
+        }
+        if (textAmount.current.value < 1) {
+            textAmount.current.focus();
+        } else {
+            predictionDraw(amount)
+        }
+    };
+
+    const handleBtnAwayClick = () => {
+        if (matchRoundIds.includes(predictionModel.roundId)) {
+            return
+        }
+        if (textAmount.current.value < 1) {
+            textAmount.current.focus();
+        } else {
+            predictionAway(amount)
+        }
+    };
+
 
     const htmlButtonPredict = <>
         {showSelectedTeam()}
         <div className={(matchRoundIds.includes(predictionModel.roundId) ? "opacity-25 " : "") + "basis-1/3 grid grid-cols-3 content-center mb-2 gap-4"}>
-            <button className={((isLive || isMatchEnd || matchRoundIds.includes(predictionModel.roundId)) ? "cursor-not-allowed " : "") + "basis-1/3 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"} onClick={handleBtnClick}>
+            <button className={((isLive || isMatchEnd || matchRoundIds.includes(predictionModel.roundId)) ? "cursor-not-allowed " : "") + "basis-1/3 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"} onClick={handleBtnHomeClick}>
                 Home
             </button>
-            <button className={((isLive || isMatchEnd || matchRoundIds.includes(predictionModel.roundId)) ? "cursor-not-allowed " : "") + "basis-1/3 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"}>
+            <button className={((isLive || isMatchEnd || matchRoundIds.includes(predictionModel.roundId)) ? "cursor-not-allowed " : "") + "basis-1/3 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"} onClick={handleBtnDrawClick}>
                 Draw
             </button>
-            <button className={((isLive || isMatchEnd || matchRoundIds.includes(predictionModel.roundId)) ? "cursor-not-allowed " : "") + "basis-1/3 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"}>
+            <button className={((isLive || isMatchEnd || matchRoundIds.includes(predictionModel.roundId)) ? "cursor-not-allowed " : "") + "basis-1/3 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"} onClick={handleBtnAwayClick}>
                 Away
             </button>
         </div>
