@@ -121,15 +121,10 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
             console.log("connectContractBet", connectContractBet)
             const amountWei = utils.parseEther(amount);
             console.log("predictionModel.roundId", predictionModel.roundId)
-            await connectContractBet?.predictionHome(predictionModel.roundId, amountWei)
-                .then(value => {
-                    location.reload()
-                    console.log("predictionHome Success", value)
-                })
-                .catch(err => {
-                    console.log("predictionHome Error", err)
-                })
 
+            const tx = await connectContractBet?.predictionHome(predictionModel.roundId, amountWei);
+            const receipt = await tx.wait();
+            console.log(receipt);
         } else {
             let contract = tokenBusd.connect(signer)
             const amountWei = utils.parseEther(amount);
