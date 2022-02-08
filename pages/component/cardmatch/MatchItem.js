@@ -21,7 +21,7 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
     const [amount, setAmount] = useState(0)
     const [amountAllow, setAmountAllow] = useState(0)
     const [userPrediction, setUserPrediction] = useState(null)
-    const [totalAmount , setTotalAmount] = useState(predictionModel.totalAmount ? 0 : predictionModel.totalAmount)
+    const [totalAmount, setTotalAmount] = useState(predictionModel.totalAmount ? 0 : predictionModel.totalAmount)
     const textAmount = useRef(null);
 
     useEffect(() => {
@@ -105,12 +105,12 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
         console.log("approveContract")
         const wei = utils.parseEther('100.0');
         let contract = tokenBusd.connect(signer)
-        await contract?.approve(contractBetAddress, wei).then(approved => {
-            setIsApprove(approved)
-            Router.reload()
-        }).catch(err => {
-            console.log("approve", err)
-        })
+        const tx = await contract?.approve(contractBetAddress, wei)
+        await tx.wait().then(() => {
+            location.reload()
+        }).catch(() => {
+
+        });
     }
 
     const predictionHome = async (amount) => {
@@ -123,18 +123,21 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
             console.log("predictionModel.roundId", predictionModel.roundId)
 
             const tx = await connectContractBet?.predictionHome(predictionModel.roundId, amountWei);
-            const receipt = await tx.wait();
-            console.log(receipt);
+            await tx.wait().then(() => {
+                location.reload()
+            }).catch(() => {
+
+            });
+
         } else {
             let contract = tokenBusd.connect(signer)
             const amountWei = utils.parseEther(amount);
-            await contract?.increaseAllowance(contractBetAddress, amountWei).then(added => {
-                if (added) {
-                    checkAllowance()
-                }
-            }).catch(err => {
-                console.log("increaseAllowance", err)
-            })
+            const tx = await contract?.increaseAllowance(contractBetAddress, amountWei)
+            await tx.wait().then(() => {
+                location.reload()
+            }).catch(() => {
+
+            });
         }
     }
 
@@ -146,25 +149,23 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
             console.log("connectContractBet", connectContractBet)
             const amountWei = utils.parseEther(amount);
             console.log("predictionModel.roundId", predictionModel.roundId)
-            await connectContractBet?.predictionDraw(predictionModel.roundId, amountWei)
-                .then(value => {
-                    location.reload()
-                    console.log("predictionHome Success", value)
-                })
-                .catch(err => {
-                    console.log("predictionHome Error", err)
-                })
+            const tx = await connectContractBet?.predictionDraw(predictionModel.roundId, amountWei)
+            await tx.wait().then(() => {
+                location.reload()
+            }).catch(() => {
+
+            });
 
         } else {
             let contract = tokenBusd.connect(signer)
             const amountWei = utils.parseEther(amount);
-            await contract?.increaseAllowance(contractBetAddress, amountWei).then(added => {
-                if (added) {
-                    checkAllowance()
-                }
-            }).catch(err => {
-                console.log("increaseAllowance", err)
-            })
+            const tx = await contract?.increaseAllowance(contractBetAddress, amountWei)
+            await tx.wait().then(() => {
+                location.reload()
+            }).catch(() => {
+
+            });
+
         }
     }
 
@@ -176,25 +177,24 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
             console.log("connectContractBet", connectContractBet)
             const amountWei = utils.parseEther(amount);
             console.log("predictionModel.roundId", predictionModel.roundId)
-            await connectContractBet?.predictionAway(predictionModel.roundId, amountWei)
-                .then(value => {
-                    location.reload()
-                    console.log("predictionHome Success", value)
-                })
-                .catch(err => {
-                    console.log("predictionHome Error", err)
-                })
+            const tx = await connectContractBet?.predictionAway(predictionModel.roundId, amountWei)
+
+            await tx.wait().then(() => {
+                location.reload()
+            }).catch(() => {
+
+            });
 
         } else {
             let contract = tokenBusd.connect(signer)
             const amountWei = utils.parseEther(amount);
-            await contract?.increaseAllowance(contractBetAddress, amountWei).then(added => {
-                if (added) {
-                    checkAllowance()
-                }
-            }).catch(err => {
-                console.log("increaseAllowance", err)
-            })
+            const tx = await contract?.increaseAllowance(contractBetAddress, amountWei)
+
+            await tx.wait().then(() => {
+                location.reload()
+            }).catch(() => {
+
+            });
         }
     }
 
@@ -242,7 +242,7 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
         if (predictionModel != null) {
             if (predictionModel.positionWin == 0) {
                 return "Waiting Result"
-            } else if (ppredictionModel.positionWin == 1) {
+            } else if (predictionModel.positionWin == 1) {
                 return "Home Win"
             } else if (predictionModel.positionWin == 2) {
                 return "Away Win"
@@ -314,31 +314,31 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
                 </div>
             } else if (userPrediction?.positionPredict == 3) {
                 result = <div class="flex flex-row gap-4 mb-2">
-                <div class="flex basis-1/2 rounded-full">
-                    <div class="flex-none">
+                    <div class="flex basis-1/2 rounded-full">
+                        <div class="flex-none">
 
+                        </div>
+                        <div class="grow">
+
+                        </div>
                     </div>
-                    <div class="grow">
+                    <div class="flex bg-emerald-300 border-solid border-2 border-red-700 basis-1/2 rounded-full">
+                        <div class="flex-none">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /> </svg>
+                        </div>
+                        <div class="grow">
+                            Entered
+                        </div>
+                    </div>
+                    <div class="flex basis-1/2 rounded-full">
+                        <div class="flex-none">
 
+                        </div>
+                        <div class="grow">
+
+                        </div>
                     </div>
                 </div>
-                <div class="flex bg-emerald-300 border-solid border-2 border-red-700 basis-1/2 rounded-full">
-                    <div class="flex-none">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /> </svg>
-                    </div>
-                    <div class="grow">
-                        Entered
-                    </div>
-                </div>
-                <div class="flex basis-1/2 rounded-full">
-                    <div class="flex-none">
-
-                    </div>
-                    <div class="grow">
-
-                    </div>
-                </div>
-            </div>
             }
         } else {
             result = ""
@@ -379,6 +379,33 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
         }
     };
 
+    function getPredictWin() {
+        return userPrediction?.positionPredict != 0 && predictionModel.positionWin != 0 && userPrediction?.positionPredict == predictionModel.positionWin
+    }
+
+    function getPredictLoser() {
+        return userPrediction?.positionPredict != 0 && predictionModel.positionWin != 0 && userPrediction?.positionPredict != predictionModel.positionWin
+    }
+
+    function getLayoutClaim() {
+
+        return <div class="flex flex-col max-w-full content-center">
+            <blockquote class="text-2xl font-semibold italic text-center text-slate-900">
+                You Win
+            </blockquote>
+            <button type="button" class="text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:ring-green-300 dark:focus:ring-green-800 shadow-lg shadow-green-500/50 dark:shadow-lg dark:shadow-green-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">Claim</button>
+        </div>;
+    }
+
+    function getLayoutLoser() {
+
+        return <div class="flex flex-col max-w-full content-center">
+            <blockquote class="text-2xl font-semibold italic text-center text-slate-900">
+                You Loser
+            </blockquote>
+        </div>;
+    }
+
 
     const htmlButtonPredict = <>
         {showSelectedTeam()}
@@ -412,9 +439,25 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
         </div>
     </form>
 
+    function checkMatchAndClaim() {
+        console.log("predictionModel", predictionModel.roundId);
+        console.log("isMatchEnd :",isMatchEnd);
+        console.log("getPredictWin :",getPredictWin());
+        console.log("isClaimed :",userPrediction?.isClaimed);
+
+        /// user not predice
+        if (isMatchEnd && !getPredictWin() && !userPrediction?.isClaimed) {
+            return true
+        } else if (isMatchEnd && getPredictWin() && userPrediction?.isClaimed) {
+            return true
+        } else {
+            return false
+        }
+    }
+
     return (
         <>
-            <div className={(isMatchEnd ? "opacity-25" : "") + " max-w-sm rounded-[14px] overflow-hidden shadow-lg shadow-indigo-500/40  bg-white px-4"}>
+            <div className={(checkMatchAndClaim() ? "opacity-25" : "") + " max-w-sm rounded-[14px] overflow-hidden shadow-lg shadow-indigo-500/40  bg-white px-4"}>
                 <div className="flex flex-row">
                     {isMatchEnd ? <blockquote class="md:opacity-100 text-2xl font-semibold italic text-center text-gray-900  mb-4">
                         <span class="before:block before:absolute before:-inset-1 before:-skew-y-3 before:bg-pink-500 relative inline-block">
@@ -495,9 +538,12 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
                         <div style={{ width: (getPercentage(predictionModel.amountAway) + "%") }} className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-pink-500"></div>
                     </div>
                 </div>
-                {isApprove ? htmlInputAmount : ""}
+                
+                {getPredictWin() || getPredictLoser() ? "" : isApprove ? htmlInputAmount : ""}
 
-                {isApprove ? htmlButtonPredict : htmlButtonApprove}
+                {getPredictWin() ? "" : isApprove ? htmlButtonPredict : htmlButtonApprove}
+
+                {getPredictWin() ? getLayoutClaim() : getPredictLoser() ? getLayoutLoser(): ""}
 
             </div>
         </>
