@@ -3,10 +3,9 @@ import { contractBetAddress } from "../constants/constants";
 import { useAppContext } from "../context/AppContext";
 import { utils } from "ethers";
 import UserPrediction from "../../model/UserPrediction";
-import { Router } from "next/router";
 
 export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRoundIds }) {
-    const { address, tokenBusd, contranctBet, signer } = useAppContext();
+    const { address, tokenBusd, contranctBet, signer, isShowError } = useAppContext();
     const dateNow = new Date();
     const epoch = dateNow.getTime() / 1000.0;
     const timeleft = predictionModel.timeLockPrediction - epoch
@@ -181,8 +180,8 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
 
             await tx.wait().then(() => {
                 location.reload()
-            }).catch(() => {
-
+            }).catch((error) => {
+                console.log("errorASDASDASDASDASDASDASD ", error)
             });
 
         } else {
@@ -379,8 +378,29 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
         }
     };
 
+    const handleBtnClaimClick = async () => {
+        console.log("handleBtnClaimClick")
+        let connectContractBet = contranctBet.connect(signer)
+        console.log("connectContractBet", connectContractBet)
+        console.log("predictionModel.roundId", predictionModel.roundId)
+
+        try {
+            const tx = await connectContractBet?.claimReward(predictionModel.roundId, address);
+
+            await tx.wait().then(() => {
+                location.reload()
+            }).catch((error) => {
+
+            });
+        } catch (error) {
+            error.data.message
+
+            isShowError(true);
+        }
+    }
+
     function getPredictWin() {
-        return userPrediction?.positionPredict != 0 && predictionModel.positionWin != 0 && userPrediction?.positionPredict == predictionModel.positionWin
+        return userPrediction?.positionPredict != 0 && predictionModel.positionWin != 0 && (userPrediction?.positionPredict == predictionModel.positionWin || userPrediction?.positionPredict != 0 && predictionModel.positionWin == 4)
     }
 
     function getPredictLoser() {
@@ -393,7 +413,9 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
             <blockquote class="text-2xl font-semibold italic text-center text-slate-900">
                 You Win
             </blockquote>
-            <button type="button" class="text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:ring-green-300 dark:focus:ring-green-800 shadow-lg shadow-green-500/50 dark:shadow-lg dark:shadow-green-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">Claim</button>
+            <button type="button" class="text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:ring-green-300 dark:focus:ring-green-800 shadow-lg shadow-green-500/50 dark:shadow-lg dark:shadow-green-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2" onClick={() => {
+                handleBtnClaimClick()
+            }}>Claim</button>
         </div>;
     }
 
@@ -440,11 +462,6 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
     </form>
 
     function checkMatchAndClaim() {
-        console.log("predictionModel", predictionModel.roundId);
-        console.log("isMatchEnd :",isMatchEnd);
-        console.log("getPredictWin :",getPredictWin());
-        console.log("isClaimed :",userPrediction?.isClaimed);
-
         /// user not predice
         if (isMatchEnd && !getPredictWin() && !userPrediction?.isClaimed) {
             return true
@@ -538,12 +555,12 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
                         <div style={{ width: (getPercentage(predictionModel.amountAway) + "%") }} className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-pink-500"></div>
                     </div>
                 </div>
-                
+
                 {getPredictWin() || getPredictLoser() ? "" : isApprove ? htmlInputAmount : ""}
 
                 {getPredictWin() ? "" : isApprove ? htmlButtonPredict : htmlButtonApprove}
 
-                {getPredictWin() ? getLayoutClaim() : getPredictLoser() ? getLayoutLoser(): ""}
+                {getPredictWin() ? getLayoutClaim() : getPredictLoser() ? getLayoutLoser() : ""}
 
             </div>
         </>
