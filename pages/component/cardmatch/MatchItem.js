@@ -24,10 +24,10 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
     const textAmount = useRef(null);
 
     useEffect(() => {
-
-        console.log("userPrediction")
-
         const prediction = async () => {
+            if (address == null) {
+                return;
+            }
             let connectContractBet = contranctBet.connect(signer)
             let dataUserPrefiction = await connectContractBet.userPrediction(predictionModel.roundId, address)
             let userNewPrediction = new UserPrediction(
@@ -46,7 +46,7 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
     useEffect(() => {
 
         if (tokenBusd) {
-            console.log(checkAllowance())
+            checkAllowance();
         }
 
     }, [tokenBusd])
@@ -87,6 +87,9 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
     }
 
     const checkAllowance = async () => {
+        if(address == null) {
+            return;
+        }
         await tokenBusd?.allowance(address, contractBetAddress).then(wei => {
 
             let allowedBusd = utils.formatEther(wei.toString())
@@ -101,7 +104,9 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
     }
 
     const approveContract = async () => {
-        console.log("approveContract")
+        if(address == null) {
+            return;
+        }
         const wei = utils.parseEther('100.0');
         let contract = tokenBusd.connect(signer)
         const tx = await contract?.approve(contractBetAddress, wei)
@@ -113,13 +118,12 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
     }
 
     const predictionHome = async (amount) => {
-        console.log("predictionHome")
+        if(address == null) {
+            return;
+        }
         if (parseInt(amountAllow) > parseInt(amount)) {
-            console.log("amountAllow > amount")
             let connectContractBet = contranctBet.connect(signer)
-            console.log("connectContractBet", connectContractBet)
             const amountWei = utils.parseEther(amount);
-            console.log("predictionModel.roundId", predictionModel.roundId)
 
             const tx = await connectContractBet?.predictionHome(predictionModel.roundId, amountWei);
             await tx.wait().then(() => {
@@ -141,13 +145,12 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
     }
 
     const predictionDraw = async (amount) => {
-        console.log("predictionHome")
+        if(address == null) {
+            return;
+        }
         if (parseInt(amountAllow) > parseInt(amount)) {
-            console.log("amountAllow > amount")
             let connectContractBet = contranctBet.connect(signer)
-            console.log("connectContractBet", connectContractBet)
             const amountWei = utils.parseEther(amount);
-            console.log("predictionModel.roundId", predictionModel.roundId)
             const tx = await connectContractBet?.predictionDraw(predictionModel.roundId, amountWei)
             await tx.wait().then(() => {
                 location.reload()
@@ -169,13 +172,12 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
     }
 
     const predictionAway = async (amount) => {
-        console.log("predictionHome")
+        if(address == null) {
+            return;
+        }
         if (parseInt(amountAllow) > parseInt(amount)) {
-            console.log("amountAllow > amount")
             let connectContractBet = contranctBet.connect(signer)
-            console.log("connectContractBet", connectContractBet)
             const amountWei = utils.parseEther(amount);
-            console.log("predictionModel.roundId", predictionModel.roundId)
             const tx = await connectContractBet?.predictionAway(predictionModel.roundId, amountWei)
 
             await tx.wait().then(() => {
@@ -198,6 +200,9 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
     }
 
     const getUserPrediction = async (roundId) => {
+        if(address == null) {
+            return;
+        }
         if (roundId) {
             let connectContractBet = contranctBet.connect(signer)
             await connectContractBet.userPrediction(roundId, address).then(prediction => {
@@ -207,7 +212,6 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
                     parseInt(utils.formatEther(prediction.amount.toString())),
                     prediction.isClaimed
                 )
-                console.log("userPrediction", userNewPrediction);
                 setUserPrediction(userNewPrediction)
             })
                 .catch(err => {
@@ -255,6 +259,9 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
 
     function showSelectedTeam() {
         let result;
+        if(matchRoundIds == null) {
+            return "";
+        }
         if (matchRoundIds.includes(predictionModel.roundId)) {
             if (userPrediction?.positionPredict == 1) {
                 result =
@@ -346,8 +353,11 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
     }
 
     const handleBtnHomeClick = () => {
+        if(address == null) {
+            return;
+        }
         if (matchRoundIds.includes(predictionModel.roundId)) {
-            return
+            return;
         }
         if (textAmount.current.value < 1) {
             textAmount.current.focus();
@@ -357,8 +367,11 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
     };
 
     const handleBtnDrawClick = () => {
+        if(address == null) {
+            return;
+        }
         if (matchRoundIds.includes(predictionModel.roundId)) {
-            return
+            return;
         }
         if (textAmount.current.value < 1) {
             textAmount.current.focus();
@@ -368,8 +381,11 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
     };
 
     const handleBtnAwayClick = () => {
+        if(address == null) {
+            return;
+        }
         if (matchRoundIds.includes(predictionModel.roundId)) {
-            return
+            return;
         }
         if (textAmount.current.value < 1) {
             textAmount.current.focus();
@@ -379,12 +395,11 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
     };
 
     const handleBtnClaimClick = async () => {
-        console.log("handleBtnClaimClick")
-        let connectContractBet = contranctBet.connect(signer)
-        console.log("connectContractBet", connectContractBet)
-        console.log("predictionModel.roundId", predictionModel.roundId)
-
+        if(address == null) {
+            return;
+        }
         try {
+            let connectContractBet = contranctBet.connect(signer)
             const tx = await connectContractBet?.claimReward(predictionModel.roundId, address);
 
             await tx.wait().then(() => {
@@ -400,11 +415,19 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
     }
 
     function getPredictWin() {
-        return userPrediction?.positionPredict != 0 && predictionModel.positionWin != 0 && (userPrediction?.positionPredict == predictionModel.positionWin || userPrediction?.positionPredict != 0 && predictionModel.positionWin == 4)
+        if(address != null) {
+            return userPrediction?.positionPredict != 0 && predictionModel.positionWin != 0 && (userPrediction?.positionPredict == predictionModel.positionWin || userPrediction?.positionPredict != 0 && predictionModel.positionWin == 4)
+        } else {
+            return false;
+        }
     }
 
     function getPredictLoser() {
-        return userPrediction?.positionPredict != 0 && predictionModel.positionWin != 0 && userPrediction?.positionPredict != predictionModel.positionWin
+        if(address != null) {
+            return userPrediction?.positionPredict != 0 && predictionModel.positionWin != 0 && userPrediction?.positionPredict != predictionModel.positionWin
+        } else {
+            return false;
+        }
     }
 
     function getLayoutClaim() {
@@ -464,11 +487,11 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
     function checkMatchAndClaim() {
         /// user not predice
         if (isMatchEnd && !getPredictWin() && !userPrediction?.isClaimed) {
-            return true
+            return true;
         } else if (isMatchEnd && getPredictWin() && userPrediction?.isClaimed) {
-            return true
+            return true;
         } else {
-            return false
+            return false;
         }
     }
 

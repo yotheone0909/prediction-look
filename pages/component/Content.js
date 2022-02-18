@@ -4,7 +4,6 @@ export default function Content({ children }) {
 
   const { modalError, isShowError } = useAppContext();
 
-  console.log("asdasdadadsTYOYOYOYO", modalError);
   function showErrorModal() {
       let htmlError;
       if(modalError) {

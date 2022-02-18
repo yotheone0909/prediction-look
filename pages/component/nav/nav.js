@@ -7,10 +7,8 @@ export default function Nav()
 {
   const { connect, address, predicts } = useAppContext();
   const [users, setUsers] = useState(0);
-  function mintToken()
-  {
-    console.log(predicts);
-  }
+
+  console.log(address);
 
   function connectToMetamask()
   {

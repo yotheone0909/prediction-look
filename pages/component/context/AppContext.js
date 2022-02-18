@@ -12,93 +12,68 @@ export function AppWrapper({ children }) {
     const [contranctBet, setContranctBet] = useState(null);
     const [signer, setSigner] = useState(null);
     const [modalError, setModalError] = useState(false);
-    const [switchNetwork, setSwitchNetwork] = useState(false);
-
-    useEffect(async () => {
-        if (window.ethereum) {
-            try {
-                await window.ethereum.request({
-                    method: 'wallet_switchEthereumChain',
-                    params: [{ chainId: '0x61' }], // chainId must be in hexadecimal numbers
-                }).then(() => {
-                    console.log("Correct Net");
-                    setSwitchNetwork(true);
-                });
-            } catch (error) {
-                if (error.code === 4902) {
-                    try {
-                        await window.ethereum.request({
-                            method: 'wallet_addEthereumChain',
-                            params: [
-                                {
-                                    chainId: '0x97',
-                                    rpcUrl: 'https://data-seed-prebsc-1-s1.binance.org:8545/',
-                                },
-                            ],
-                        });
-                    } catch (addError) {
-                        console.error(addError);
-                    }
-                }
-            }
-
-        } else {
-            console.error("Not Install Metamask");
-        }
-    })
 
     useEffect(async () => {
 
         if (window.ethereum) {
             let _etherWeb3 = new ethers.providers.Web3Provider(window.ethereum, "any");
-            await _etherWeb3.send("eth_requestAccounts", []).then(() => {
-                console.log("eth_requestAccounts");
-                setEtherWeb3(_etherWeb3);
+            setEtherWeb3(_etherWeb3);
+            if (window.ethereum.networkVersion !== 97) {
                 checkSwitchNetwork();
-            }).catch(() => {
-                console.log("No Login");
-            });
+            }
+            console.log(window.ethereum.networkVersion, 'window.ethereum.networkVersion');
         } else {
             console.error("Not Install Metamask");
         }
     }, [])
 
     useEffect(async () => {
-        console.log("etherWeb3, ", etherWeb3);
-        if (etherWeb3 && switchNetwork) {
-            let addresses = await etherWeb3.listAccounts();
-            var url = "https://data-seed-prebsc-1-s1.binance.org:8545/"
-            const provider = new ethers.providers.JsonRpcProvider(url);
+        try {
+            if (etherWeb3) {
+                let addresses = await etherWeb3.listAccounts();
 
-            setAddress(addresses[0])
-            setSigner(etherWeb3.getSigner())
-
-            const contract = new ethers.Contract(yoTokenAddress, tokenAbi, provider)
-            setTokenBusd(contract)
-            const contractBet = new ethers.Contract(contractBetAddress, contractBetAbi, provider)
-            setContranctBet(contractBet)
-
-            ethereum.on("accountsChanged", (addresses) => {
                 setAddress(addresses[0])
-            })
-            values
+                setSigner(etherWeb3.getSigner())
+
+                ethereum.on("accountsChanged", (addresses) => {
+                    setAddress(addresses[0])
+                })
+                ethereum.on('chainChanged', (chainId) => {
+                    window.location.reload();
+                  });
+            }
+        } catch (error) {
+            console.log("Error Error", error);
         }
 
-    }, [etherWeb3, switchNetwork])
+        var url = "https://data-seed-prebsc-1-s1.binance.org:8545/"
+        const provider = new ethers.providers.JsonRpcProvider(url);
+        const contract = new ethers.Contract(yoTokenAddress, tokenAbi, provider)
+        setTokenBusd(contract)
+        const contractBet = new ethers.Contract(contractBetAddress, contractBetAbi, provider)
+        setContranctBet(contractBet)
+
+        values
+
+    }, [etherWeb3])
 
     const values = useMemo(() => {
 
         return {
             connect: async () => {
                 try {
-                    await etherWeb3.send("eth_requestAccounts", []);
-                    let addresses = await etherWeb3.listAccounts()
+                    // const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
 
-                    setAddress(addresses[0])
+                    await etherWeb3.send("eth_requestAccounts", []).then(() => {
+                        console.log("eth_requestAccounts");
+                    }).catch(() => {
+                        console.log("No Login");
+                    });
+                    // let addresses = await etherWeb3.listAccounts()
 
-                    console.log("useMemo Context: ")
+                    setAddress(accounts[0])
 
-                } catch {
+                } catch (error) {
                     location.reload()
                 }
 
@@ -113,7 +88,7 @@ export function AppWrapper({ children }) {
             tokenBusd: tokenBusd
 
         }
-    }, [address, tokenBusd, contranctBet, modalError])
+    }, [address, tokenBusd, contranctBet, modalError, etherWeb3])
 
     const checkSwitchNetwork = async () => {
 
@@ -121,9 +96,6 @@ export function AppWrapper({ children }) {
             await window.ethereum.request({
                 method: 'wallet_switchEthereumChain',
                 params: [{ chainId: '0x61' }], // chainId must be in hexadecimal numbers
-            }).then(() => {
-                console.log("Correct Net");
-                setSwitchNetwork(true);
             });
         } catch (error) {
             if (error.code === 4902) {
