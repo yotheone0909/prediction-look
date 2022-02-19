@@ -1,6 +1,5 @@
 import { ethers } from "ethers";
 import { useEffect, useState } from "react";
-import Home from "../..";
 import { AppWrapper, connectToMetamask, log, useAppContext } from "../context/AppContext"
 
 export default function Nav()

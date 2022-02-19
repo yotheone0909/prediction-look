@@ -3,9 +3,11 @@ import { contractBetAddress } from "../constants/constants";
 import { useAppContext } from "../context/AppContext";
 import { utils } from "ethers";
 import UserPrediction from "../../model/UserPrediction";
+import { useLayoutContext } from "../context/LayourContext";
 
 export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRoundIds }) {
-    const { address, tokenBusd, contranctBet, signer, isShowError } = useAppContext();
+    const { address, tokenBusd, contranctBet, signer } = useAppContext();
+    const { isShowError, setLoading } = useLayoutContext();
     const dateNow = new Date();
     const epoch = dateNow.getTime() / 1000.0;
     const timeleft = predictionModel.timeLockPrediction - epoch
@@ -87,7 +89,7 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
     }
 
     const checkAllowance = async () => {
-        if(address == null) {
+        if (address == null) {
             return;
         }
         await tokenBusd?.allowance(address, contractBetAddress).then(wei => {
@@ -104,13 +106,15 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
     }
 
     const approveContract = async () => {
-        if(address == null) {
+        if (address == null) {
             return;
         }
+        setLoading(true);
         const wei = utils.parseEther('100.0');
         let contract = tokenBusd.connect(signer)
         const tx = await contract?.approve(contractBetAddress, wei)
         await tx.wait().then(() => {
+            setLoading(false);
             location.reload()
         }).catch(() => {
 
@@ -118,15 +122,20 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
     }
 
     const predictionHome = async (amount) => {
-        if(address == null) {
+        if (address == null) {
             return;
         }
+
+        setLoading(true);
         if (parseInt(amountAllow) > parseInt(amount)) {
             let connectContractBet = contranctBet.connect(signer)
             const amountWei = utils.parseEther(amount);
 
             const tx = await connectContractBet?.predictionHome(predictionModel.roundId, amountWei);
             await tx.wait().then(() => {
+
+                setLoading(false);
+
                 location.reload()
             }).catch(() => {
 
@@ -137,6 +146,9 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
             const amountWei = utils.parseEther(amount);
             const tx = await contract?.increaseAllowance(contractBetAddress, amountWei)
             await tx.wait().then(() => {
+
+                setLoading(false);
+
                 location.reload()
             }).catch(() => {
 
@@ -145,14 +157,18 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
     }
 
     const predictionDraw = async (amount) => {
-        if(address == null) {
+        if (address == null) {
             return;
         }
+
+        setLoading(true);
+
         if (parseInt(amountAllow) > parseInt(amount)) {
             let connectContractBet = contranctBet.connect(signer)
             const amountWei = utils.parseEther(amount);
             const tx = await connectContractBet?.predictionDraw(predictionModel.roundId, amountWei)
             await tx.wait().then(() => {
+                setLoading(false);
                 location.reload()
             }).catch(() => {
 
@@ -163,6 +179,7 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
             const amountWei = utils.parseEther(amount);
             const tx = await contract?.increaseAllowance(contractBetAddress, amountWei)
             await tx.wait().then(() => {
+                setLoading(false);
                 location.reload()
             }).catch(() => {
 
@@ -172,15 +189,17 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
     }
 
     const predictionAway = async (amount) => {
-        if(address == null) {
+        if (address == null) {
             return;
         }
+        setLoading(true);
         if (parseInt(amountAllow) > parseInt(amount)) {
             let connectContractBet = contranctBet.connect(signer)
             const amountWei = utils.parseEther(amount);
             const tx = await connectContractBet?.predictionAway(predictionModel.roundId, amountWei)
 
             await tx.wait().then(() => {
+                setLoading(false);
                 location.reload()
             }).catch((error) => {
                 console.log("errorASDASDASDASDASDASDASD ", error)
@@ -192,6 +211,7 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
             const tx = await contract?.increaseAllowance(contractBetAddress, amountWei)
 
             await tx.wait().then(() => {
+                setLoading(false);
                 location.reload()
             }).catch(() => {
 
@@ -200,7 +220,7 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
     }
 
     const getUserPrediction = async (roundId) => {
-        if(address == null) {
+        if (address == null) {
             return;
         }
         if (roundId) {
@@ -259,7 +279,7 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
 
     function showSelectedTeam() {
         let result;
-        if(matchRoundIds == null) {
+        if (matchRoundIds == null) {
             return "";
         }
         if (matchRoundIds.includes(predictionModel.roundId)) {
@@ -353,7 +373,7 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
     }
 
     const handleBtnHomeClick = () => {
-        if(address == null) {
+        if (address == null) {
             return;
         }
         if (matchRoundIds.includes(predictionModel.roundId)) {
@@ -367,7 +387,7 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
     };
 
     const handleBtnDrawClick = () => {
-        if(address == null) {
+        if (address == null) {
             return;
         }
         if (matchRoundIds.includes(predictionModel.roundId)) {
@@ -381,7 +401,7 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
     };
 
     const handleBtnAwayClick = () => {
-        if(address == null) {
+        if (address == null) {
             return;
         }
         if (matchRoundIds.includes(predictionModel.roundId)) {
@@ -395,14 +415,16 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
     };
 
     const handleBtnClaimClick = async () => {
-        if(address == null) {
+        if (address == null) {
             return;
         }
+        setLoading(true);
         try {
             let connectContractBet = contranctBet.connect(signer)
             const tx = await connectContractBet?.claimReward(predictionModel.roundId, address);
 
             await tx.wait().then(() => {
+                setLoading(false);
                 location.reload()
             }).catch((error) => {
 
@@ -410,12 +432,16 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
         } catch (error) {
             error.data.message
 
+            setLoading(false);
             isShowError(true);
+            setTimeout(() => {
+                isShowError(false);
+            }, 3000);
         }
     }
 
     function getPredictWin() {
-        if(address != null) {
+        if (address != null) {
             return userPrediction?.positionPredict != 0 && predictionModel.positionWin != 0 && (userPrediction?.positionPredict == predictionModel.positionWin || userPrediction?.positionPredict != 0 && predictionModel.positionWin == 4)
         } else {
             return false;
@@ -423,7 +449,7 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
     }
 
     function getPredictLoser() {
-        if(address != null) {
+        if (address != null) {
             return userPrediction?.positionPredict != 0 && predictionModel.positionWin != 0 && userPrediction?.positionPredict != predictionModel.positionWin
         } else {
             return false;

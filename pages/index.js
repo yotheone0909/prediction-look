@@ -9,10 +9,12 @@ import { AppWrapper, useAppContext } from './component/context/AppContext'
 import Nav from './component/nav/Nav'
 import NavContent from './component/nav/NavContent'
 import NavItem from './component/nav/NavItem'
+import ShowLoading from './component/loading/ShowLoading'
 
 export default function Home() {
   return (
     <>
+      <ShowLoading/>
       <Nav />
       <Content>
       <NavContent>

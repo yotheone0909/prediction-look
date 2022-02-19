@@ -78,17 +78,13 @@ export function AppWrapper({ children }) {
                 }
 
             },
-            isShowError: (bool) => {
-                setModalError(bool);
-            },
-            modalError: modalError,
             signer: signer,
             address: address,
             contranctBet: contranctBet,
             tokenBusd: tokenBusd
 
         }
-    }, [address, tokenBusd, contranctBet, modalError, etherWeb3])
+    }, [address, tokenBusd, contranctBet, etherWeb3])
 
     const checkSwitchNetwork = async () => {
 
