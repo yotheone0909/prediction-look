@@ -14,15 +14,15 @@ import ShowLoading from './component/loading/ShowLoading'
 export default function Home() {
   return (
     <>
-      <ShowLoading/>
+      <ShowLoading />
       <Nav />
       <Content>
-      <NavContent>
+        <NavContent>
           <NavItem href="/new" isActive>New Releases</NavItem>
           <NavItem href="/top">Top Rated</NavItem>
           <NavItem href="/picks">Vincent’s Picks</NavItem>
         </NavContent>
-        <CardMatch/>
+        <CardMatch />
       </Content>
     </>
   )
