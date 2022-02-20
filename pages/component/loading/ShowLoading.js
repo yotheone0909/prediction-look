@@ -18,7 +18,7 @@ export default function ShowLoading() {
         let htmlLoading;
         if (isLoading) {
           htmlLoading = <div class="bg-stone-200/50 items-center z-10 w-full h-full flex fixed place-content-center content-center justify-center">
-          <Lottie options={defaultOptions} height={400} width={400} />
+          <Lottie options={defaultOptions} height={300} width={300} />
         </div>
         } else {
           htmlLoading = "";
