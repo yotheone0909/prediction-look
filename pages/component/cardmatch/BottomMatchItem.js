@@ -1,3 +1,4 @@
+import { utils } from "ethers";
 import { useRef, useState } from "react";
 import { useLayoutContext } from "../context/LayourContext";
 
@@ -7,6 +8,11 @@ export default function BottomMatchItem({ contranctBet, signer, amountAllow, add
     const [amount, setAmount] = useState(0);
     const textAmount = useRef(null);
 
+    console.log("==============" + predictionModel.roundId + "================");
+    console.log("Check", (isLive || isMatchEnd || matchRoundIds.includes(predictionModel.roundId)));
+    console.log("isLive", isLive);
+    console.log("isMatchEnd", isMatchEnd);
+    console.log("matchRoundIds", matchRoundIds);
     function getPredictWin() {
         if (address != null) {
             return userPrediction?.positionPredict != 0 && predictionModel.positionWin != 0 && (userPrediction?.positionPredict == predictionModel.positionWin || userPrediction?.positionPredict != 0 && predictionModel.positionWin == 4)
@@ -151,13 +157,13 @@ export default function BottomMatchItem({ contranctBet, signer, amountAllow, add
     const htmlButtonPredict = <>
         {showSelectedTeam()}
         <div className={(matchRoundIds.includes(predictionModel.roundId) ? "opacity-25 " : "") + "basis-1/3 grid grid-cols-3 content-center mb-2 gap-4"}>
-            <button className={((isLive || isMatchEnd || matchRoundIds.includes(predictionModel.roundId)) ? "cursor-not-allowed " : "") + "basis-1/3 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"} onClick={handleBtnHomeClick}>
+            <button className={((isLive || isMatchEnd || matchRoundIds.includes(predictionModel.roundId)) ? "cursor-not-allowed " : "") + "basis-1/3 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"} onClick={() => handleBtnHomeClick()}>
                 Home
             </button>
-            <button className={((isLive || isMatchEnd || matchRoundIds.includes(predictionModel.roundId)) ? "cursor-not-allowed " : "") + "basis-1/3 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"} onClick={handleBtnDrawClick}>
+            <button className={((isLive || isMatchEnd || matchRoundIds.includes(predictionModel.roundId)) ? "cursor-not-allowed " : "") + "basis-1/3 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"} onClick={() => handleBtnDrawClick()}>
                 Draw
             </button>
-            <button className={((isLive || isMatchEnd || matchRoundIds.includes(predictionModel.roundId)) ? "cursor-not-allowed " : "") + "basis-1/3 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"} onClick={handleBtnAwayClick}>
+            <button className={((isLive || isMatchEnd || matchRoundIds.includes(predictionModel.roundId)) ? "cursor-not-allowed " : "") + "basis-1/3 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"} onClick={() => handleBtnAwayClick()}>
                 Away
             </button>
         </div>
@@ -173,6 +179,7 @@ export default function BottomMatchItem({ contranctBet, signer, amountAllow, add
 
 
     const handleBtnHomeClick = () => {
+        console.log("handleBtnHomeClick")
         if (address == null) {
             return;
         }
@@ -227,7 +234,7 @@ export default function BottomMatchItem({ contranctBet, signer, amountAllow, add
                 setLoading(false);
                 location.reload()
             }).catch((error) => {
-
+                setLoading(false);
             });
         } catch (error) {
             error.data.message
@@ -240,6 +247,7 @@ export default function BottomMatchItem({ contranctBet, signer, amountAllow, add
         }
     }
     const predictionHome = async (amount) => {
+        console.log("handleBtnHomeClick")
         if (address == null) {
             return;
         }
@@ -249,28 +257,40 @@ export default function BottomMatchItem({ contranctBet, signer, amountAllow, add
             let connectContractBet = contranctBet.connect(signer)
             const amountWei = utils.parseEther(amount);
 
-            const tx = await connectContractBet?.predictionHome(predictionModel.roundId, amountWei);
-            await tx.wait().then(() => {
+            try {
+                const tx = await connectContractBet?.predictionHome(predictionModel.roundId, amountWei);
+
+                await tx.wait().then(() => {
+
+                    setLoading(false);
+
+                    location.reload()
+                }).catch(() => {
+                    setLoading(false);
+                });
+            } catch (error) {
 
                 setLoading(false);
+            }
 
-                location.reload()
-            }).catch(() => {
-
-            });
 
         } else {
             let contract = tokenBusd.connect(signer)
             const amountWei = utils.parseEther(amount);
-            const tx = await contract?.increaseAllowance(contractBetAddress, amountWei)
-            await tx.wait().then(() => {
+            try {
+                const tx = await contract?.increaseAllowance(contractBetAddress, amountWei)
+                await tx.wait().then(() => {
 
+                    setLoading(false);
+
+                    location.reload()
+                }).catch(() => {
+                    setLoading(false);
+                });
+            } catch (error) {
                 setLoading(false);
+            }
 
-                location.reload()
-            }).catch(() => {
-
-            });
         }
     }
 
@@ -284,25 +304,33 @@ export default function BottomMatchItem({ contranctBet, signer, amountAllow, add
         if (parseInt(amountAllow) > parseInt(amount)) {
             let connectContractBet = contranctBet.connect(signer)
             const amountWei = utils.parseEther(amount);
-            const tx = await connectContractBet?.predictionDraw(predictionModel.roundId, amountWei)
-            await tx.wait().then(() => {
+            try {
+                const tx = await connectContractBet?.predictionDraw(predictionModel.roundId, amountWei)
+                await tx.wait().then(() => {
+                    setLoading(false);
+                    location.reload()
+                }).catch(() => {
+                    setLoading(false);
+                });
+            } catch (error) {
                 setLoading(false);
-                location.reload()
-            }).catch(() => {
+            }
 
-            });
 
         } else {
             let contract = tokenBusd.connect(signer)
             const amountWei = utils.parseEther(amount);
-            const tx = await contract?.increaseAllowance(contractBetAddress, amountWei)
-            await tx.wait().then(() => {
+            try {
+                const tx = await contract?.increaseAllowance(contractBetAddress, amountWei)
+                await tx.wait().then(() => {
+                    setLoading(false);
+                    location.reload()
+                }).catch(() => {
+
+                });
+            } catch (error) {
                 setLoading(false);
-                location.reload()
-            }).catch(() => {
-
-            });
-
+            }
         }
     }
 
@@ -314,26 +342,36 @@ export default function BottomMatchItem({ contranctBet, signer, amountAllow, add
         if (parseInt(amountAllow) > parseInt(amount)) {
             let connectContractBet = contranctBet.connect(signer)
             const amountWei = utils.parseEther(amount);
-            const tx = await connectContractBet?.predictionAway(predictionModel.roundId, amountWei)
+            try {
+                const tx = await connectContractBet?.predictionAway(predictionModel.roundId, amountWei)
 
-            await tx.wait().then(() => {
+                await tx.wait().then(() => {
+                    setLoading(false);
+                    location.reload()
+                }).catch((error) => {
+                    setLoading(false);
+                });
+            } catch (error) {
                 setLoading(false);
-                location.reload()
-            }).catch((error) => {
-                console.log("errorASDASDASDASDASDASDASD ", error)
-            });
+            }
+
 
         } else {
             let contract = tokenBusd.connect(signer)
             const amountWei = utils.parseEther(amount);
-            const tx = await contract?.increaseAllowance(contractBetAddress, amountWei)
+            try {
+                const tx = await contract?.increaseAllowance(contractBetAddress, amountWei)
 
-            await tx.wait().then(() => {
+                await tx.wait().then(() => {
+                    setLoading(false);
+                    location.reload()
+                }).catch(() => {
+                    setLoading(false);
+                });
+            } catch (error) {
                 setLoading(false);
-                location.reload()
-            }).catch(() => {
+            }
 
-            });
         }
     }
     return (

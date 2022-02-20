@@ -36,7 +36,7 @@ export function AppWrapper({ children }) {
                 setSigner(etherWeb3.getSigner())
 
                 ethereum.on("accountsChanged", (addresses) => {
-                    setAddress(addresses[0])
+                    window.location.reload();
                 })
                 ethereum.on('chainChanged', (chainId) => {
                     window.location.reload();

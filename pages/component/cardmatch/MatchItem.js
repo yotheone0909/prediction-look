@@ -39,7 +39,7 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
         if (contranctBet) {
             prediction()
         }
-    }, [address])
+    }, [])
 
     useEffect(() => {
 

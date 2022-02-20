@@ -11,6 +11,9 @@ export default function CardMatch() {
     const [predicts, setPredicts] = useState([])
     const [roundIds, setRoundIds] = useState([])
 
+    console.log("roundIds", roundIds);
+    console.log("predicts", predicts);
+
     useEffect(() => {
 
         const callRound = async () => {
