@@ -22,24 +22,32 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
     const [userPrediction, setUserPrediction] = useState(null)
 
     useEffect(() => {
-        const prediction = async () => {
-            if (address == null) {
-                return;
+        const abortController = new AbortController();
+
+        void async function fetchData() {
+            try {
+                if (address == null && predictionModel == null) {
+                    return;
+                }
+                let connectContractBet = contranctBet.connect(signer)
+                let dataUserPrefiction = await connectContractBet.userPrediction(predictionModel.roundId, address)
+                let userNewPrediction = new UserPrediction(
+                    dataUserPrefiction.roundId.toString(),
+                    dataUserPrefiction.positionPredict.toString(),
+                    parseInt(utils.formatEther(dataUserPrefiction.amount.toString())),
+                    dataUserPrefiction.isClaimed
+                )
+                setUserPrediction(userNewPrediction)
+            } catch (error) {
+                console.log('error', error);
             }
-            let connectContractBet = contranctBet.connect(signer)
-            let dataUserPrefiction = await connectContractBet.userPrediction(predictionModel.roundId, address)
-            let userNewPrediction = new UserPrediction(
-                dataUserPrefiction.roundId.toString(),
-                dataUserPrefiction.positionPredict.toString(),
-                parseInt(utils.formatEther(dataUserPrefiction.amount.toString())),
-                dataUserPrefiction.isClaimed
-            )
-            setUserPrediction(userNewPrediction)
+        }();
+
+        // cancel subscription to useEffect
+        return () => {
+            abortController.abort(); // cancel pending fetch request on component unmount
         }
-        if (contranctBet) {
-            prediction()
-        }
-    }, [])
+    }, []);
 
     useEffect(() => {
 
@@ -183,11 +191,11 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
         <>
             <div className={(checkMatchAndClaim() ? "opacity-25" : "") + " max-w-sm rounded-[14px] overflow-hidden shadow-lg shadow-indigo-500/40  bg-white px-4"}>
                 <div className="flex flex-row">
-                    {isMatchEnd ? <blockquote class="md:opacity-100 text-2xl font-semibold italic text-center text-gray-900  mb-4">
-                        <span class="before:block before:absolute before:-inset-1 before:-skew-y-3 before:bg-pink-500 relative inline-block">
-                            <span class="relative text-white">{getWinner()}</span>
+                    {isMatchEnd ? <blockquote className="md:opacity-100 text-2xl font-semibold italic text-center text-gray-900  mb-4">
+                        <span className="before:block before:absolute before:-inset-1 before:-skew-y-3 before:bg-pink-500 relative inline-block">
+                            <span className="relative text-white">{getWinner()}</span>
                         </span>
-                    </blockquote> : isLive ? <div class="rounded-md bg-rose-600 mt-2 px-2 py-1 mb-2 text-white">Live</div> : <h1 className="mt-2 px-2 py-1 mb-2">Live in {getDateMatch()}</h1>}
+                    </blockquote> : isLive ? <div className="rounded-md bg-rose-600 mt-2 px-2 py-1 mb-2 text-white">Live</div> : <h1 className="mt-2 px-2 py-1 mb-2">Live in {getDateMatch()}</h1>}
                 </div>
                 <div className="flex flex-row">
                     <div className="basis-1/3">

@@ -8,11 +8,6 @@ export default function BottomMatchItem({ contranctBet, signer, amountAllow, add
     const [amount, setAmount] = useState(0);
     const textAmount = useRef(null);
 
-    console.log("==============" + predictionModel.roundId + "================");
-    console.log("Check", (isLive || isMatchEnd || matchRoundIds.includes(predictionModel.roundId)));
-    console.log("isLive", isLive);
-    console.log("isMatchEnd", isMatchEnd);
-    console.log("matchRoundIds", matchRoundIds);
     function getPredictWin() {
         if (address != null) {
             return userPrediction?.positionPredict != 0 && predictionModel.positionWin != 0 && (userPrediction?.positionPredict == predictionModel.positionWin || userPrediction?.positionPredict != 0 && predictionModel.positionWin == 4)
@@ -31,11 +26,11 @@ export default function BottomMatchItem({ contranctBet, signer, amountAllow, add
 
     function getLayoutClaim() {
 
-        return <div class="flex flex-col max-w-full content-center">
-            <blockquote class="text-2xl font-semibold italic text-center text-slate-900">
+        return <div className="flex flex-col max-w-full content-center">
+            <blockquote className="text-2xl font-semibold italic text-center text-slate-900">
                 You Win
             </blockquote>
-            <button type="button" class="text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:ring-green-300 dark:focus:ring-green-800 shadow-lg shadow-green-500/50 dark:shadow-lg dark:shadow-green-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2" onClick={() => {
+            <button type="button" className="text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:ring-green-300 dark:focus:ring-green-800 shadow-lg shadow-green-500/50 dark:shadow-lg dark:shadow-green-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2" onClick={() => {
                 handleBtnClaimClick()
             }}>Claim</button>
         </div>;
@@ -43,8 +38,8 @@ export default function BottomMatchItem({ contranctBet, signer, amountAllow, add
 
     function getLayoutLoser() {
 
-        return <div class="flex flex-col max-w-full content-center">
-            <blockquote class="text-2xl font-semibold italic text-center text-slate-900">
+        return <div className="flex flex-col max-w-full content-center">
+            <blockquote className="text-2xl font-semibold italic text-center text-slate-900">
                 You Loser
             </blockquote>
         </div>;
@@ -67,82 +62,82 @@ export default function BottomMatchItem({ contranctBet, signer, amountAllow, add
         if (matchRoundIds.includes(predictionModel.roundId)) {
             if (userPrediction?.positionPredict == 1) {
                 result =
-                    <div class="flex flex-row gap-4 mb-2">
-                        <div class="flex bg-emerald-300 border-solid border-2 border-red-700 basis-1/2 rounded-full">
-                            <div class="flex-none">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /> </svg>
+                    <div className="flex flex-row gap-4 mb-2">
+                        <div className="flex bg-emerald-300 border-solid border-2 border-red-700 basis-1/2 rounded-full">
+                            <div className="flex-none">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"> <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /> </svg>
                             </div>
-                            <div class="grow">
+                            <div className="grow">
                                 Entered
                             </div>
                         </div>
-                        <div class="flex basis-1/2 rounded-full">
-                            <div class="flex-none">
+                        <div className="flex basis-1/2 rounded-full">
+                            <div className="flex-none">
 
                             </div>
-                            <div class="grow">
+                            <div className="grow">
 
                             </div>
                         </div>
-                        <div class="flex basis-1/2 rounded-full">
-                            <div class="flex-none">
+                        <div className="flex basis-1/2 rounded-full">
+                            <div className="flex-none">
 
                             </div>
-                            <div class="grow">
+                            <div className="grow">
 
                             </div>
                         </div>
                     </div>
             } else if (userPrediction?.positionPredict == 2) {
-                result = <div class="flex flex-row gap-4 mb-2">
-                    <div class="flex basis-1/2 rounded-full">
-                        <div class="flex-none">
+                result = <div className="flex flex-row gap-4 mb-2">
+                    <div className="flex basis-1/2 rounded-full">
+                        <div className="flex-none">
 
                         </div>
-                        <div class="grow">
-
-                        </div>
-                    </div>
-                    <div class="flex basis-1/2 rounded-full">
-                        <div class="flex-none">
-
-                        </div>
-                        <div class="grow">
+                        <div className="grow">
 
                         </div>
                     </div>
-                    <div class="flex bg-emerald-300 border-solid border-2 border-red-700 basis-1/2 rounded-full">
-                        <div class="flex-none">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /> </svg>
+                    <div className="flex basis-1/2 rounded-full">
+                        <div className="flex-none">
+
                         </div>
-                        <div class="grow">
+                        <div className="grow">
+
+                        </div>
+                    </div>
+                    <div className="flex bg-emerald-300 border-solid border-2 border-red-700 basis-1/2 rounded-full">
+                        <div className="flex-none">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"> <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /> </svg>
+                        </div>
+                        <div className="grow">
                             Entered
                         </div>
                     </div>
                 </div>
             } else if (userPrediction?.positionPredict == 3) {
-                result = <div class="flex flex-row gap-4 mb-2">
-                    <div class="flex basis-1/2 rounded-full">
-                        <div class="flex-none">
+                result = <div className="flex flex-row gap-4 mb-2">
+                    <div className="flex basis-1/2 rounded-full">
+                        <div className="flex-none">
 
                         </div>
-                        <div class="grow">
+                        <div className="grow">
 
                         </div>
                     </div>
-                    <div class="flex bg-emerald-300 border-solid border-2 border-red-700 basis-1/2 rounded-full">
-                        <div class="flex-none">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /> </svg>
+                    <div className="flex bg-emerald-300 border-solid border-2 border-red-700 basis-1/2 rounded-full">
+                        <div className="flex-none">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"> <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /> </svg>
                         </div>
-                        <div class="grow">
+                        <div className="grow">
                             Entered
                         </div>
                     </div>
-                    <div class="flex basis-1/2 rounded-full">
-                        <div class="flex-none">
+                    <div className="flex basis-1/2 rounded-full">
+                        <div className="flex-none">
 
                         </div>
-                        <div class="grow">
+                        <div className="grow">
 
                         </div>
                     </div>
@@ -179,7 +174,6 @@ export default function BottomMatchItem({ contranctBet, signer, amountAllow, add
 
 
     const handleBtnHomeClick = () => {
-        console.log("handleBtnHomeClick")
         if (address == null) {
             return;
         }
@@ -247,7 +241,6 @@ export default function BottomMatchItem({ contranctBet, signer, amountAllow, add
         }
     }
     const predictionHome = async (amount) => {
-        console.log("handleBtnHomeClick")
         if (address == null) {
             return;
         }
