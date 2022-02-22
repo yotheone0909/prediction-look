@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { contractBetAddress } from "../constants/constants";
+import { contractBetAddress, getTeams, teams } from "../constants/constants";
 import { useAppContext } from "../context/AppContext";
 import { utils } from "ethers";
 import UserPrediction from "../../model/UserPrediction";
@@ -20,6 +20,8 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
     const [isApprove, setIsApprove] = useState(false)
     const [amountAllow, setAmountAllow] = useState(0)
     const [userPrediction, setUserPrediction] = useState(null)
+    const [homeTeam, setHomeTeam] = useState(null);
+    const [awayTeam, setAwayTeam] = useState(null);
 
     useEffect(() => {
         const abortController = new AbortController();
@@ -48,6 +50,13 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
             abortController.abort(); // cancel pending fetch request on component unmount
         }
     }, []);
+
+    useEffect(() => {
+
+        setHomeTeam(teams.get(parseInt(predictionModel.homeId)))
+        setAwayTeam(teams.get(parseInt(predictionModel.awayId)))
+
+    }, [predictionModel, homeTeam, awayTeam])
 
     useEffect(() => {
 
@@ -147,7 +156,8 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
     function getPercentage(amount) {
         if (predictionModel != null) {
             const totalPredict = predictionModel.amountHome + predictionModel.amountAway + predictionModel.amountDraw;
-            return totalPredict <= 0 ? 0 : (amount / totalPredict) * 100
+        
+            return Math.round(totalPredict <= 0 ? 0 : (amount / totalPredict) * 100).toFixed(2);
         }
     }
 
@@ -175,16 +185,21 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
         }
     }
 
-
     function checkMatchAndClaim() {
         /// user not predice
-        if (isMatchEnd && !getPredictWin() && !userPrediction?.isClaimed) {
+        if (predictionModel?.positionWin == 0) {
+            return false;
+        } else if (isMatchEnd && !getPredictWin() && !userPrediction?.isClaimed) {
             return true;
         } else if (isMatchEnd && getPredictWin() && userPrediction?.isClaimed) {
             return true;
         } else {
             return false;
         }
+    }
+
+    function showNameTeams() {
+        return homeTeam?.name + " VS " + awayTeam?.name;
     }
 
     return (
@@ -199,7 +214,7 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
                 </div>
                 <div className="flex flex-row">
                     <div className="basis-1/3">
-                        <img className="w-full" src="https://upload.wikimedia.org/wikipedia/en/thumb/5/53/Arsenal_FC.svg/1200px-Arsenal_FC.svg.png" />
+                        <img className="h-24 w-24" src={homeTeam?.image === undefined ? "https://goalsreplay.com/assets/images/placeholders/placeholder_team_picture.png" : homeTeam?.image} />
                     </div>
                     <div className="basis-1/3 grid grid-cols-1 content-center">
                         <p className="text-center"> VS </p>
@@ -207,11 +222,11 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
 
                     <div className="basis-1/3">
 
-                        <img className="w-full" src="https://upload.wikimedia.org/wikipedia/en/thumb/e/eb/Manchester_City_FC_badge.svg/1200px-Manchester_City_FC_badge.svg.png" />
+                        <img className="h-24 w-24" src={awayTeam?.image === undefined ? "https://goalsreplay.com/assets/images/placeholders/placeholder_team_picture.png" : awayTeam?.image} />
                     </div>
                 </div>
                 <div className="px-6 py-4">
-                    <div className="font-bold text-xl mb-2">Arsenal VS ManCity</div>
+                    <div className="font-bold text-xl mb-2">{showNameTeams()}</div>
                     <p className="text-gray-700 text-xs">
                         Football / England Premiere League
                     </p>
@@ -271,7 +286,7 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
                     </div>
                 </div>
 
-                <BottomMatchItem contranctBet={contranctBet} signer={signer} amountAllow={amountAllow} address={address} isLive={isLive} isMatchEnd={isMatchEnd} isApprove={isApprove} userPrediction={userPrediction} predictionModel={predictionModel} matchRoundIds={matchRoundIds} />
+                <BottomMatchItem contranctBet={contranctBet} tokenBusd={tokenBusd} signer={signer} amountAllow={amountAllow} address={address} isLive={isLive} isMatchEnd={isMatchEnd} isApprove={isApprove} userPrediction={userPrediction} predictionModel={predictionModel} matchRoundIds={matchRoundIds} />
 
             </div>
         </>

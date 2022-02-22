@@ -1,8 +1,9 @@
 import { utils } from "ethers";
 import { useRef, useState } from "react";
+import { contractBetAddress } from "../constants/constants";
 import { useLayoutContext } from "../context/LayourContext";
 
-export default function BottomMatchItem({ contranctBet, signer, amountAllow, address, isLive, isMatchEnd, isApprove, userPrediction, predictionModel, matchRoundIds }) {
+export default function BottomMatchItem({ contranctBet, tokenBusd, signer, amountAllow, address, isLive, isMatchEnd, isApprove, userPrediction, predictionModel, matchRoundIds }) {
 
     const { isShowError, setLoading } = useLayoutContext();
     const [amount, setAmount] = useState(0);
@@ -24,16 +25,38 @@ export default function BottomMatchItem({ contranctBet, signer, amountAllow, add
         }
     }
 
-    function getLayoutClaim() {
+    function checkMatchAndClaim() {
+        /// user not predice
+        if (isMatchEnd && !getPredictWin() && !userPrediction?.isClaimed) {
+            return true;
+        } else if (isMatchEnd && getPredictWin() && userPrediction?.isClaimed) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
+    function getLayoutClaim() {
+        let textButton = "";
+        let cursorNotAllowed = "";
+        let disabled = false;
+        if (checkMatchAndClaim()) {
+            textButton = "Claimed";
+            cursorNotAllowed = "cursor-not-allowed ";
+            disabled = true;
+        } else {
+            disabled = false;
+            textButton = "Claim";
+            cursorNotAllowed = "";
+        }
         return <div className="flex flex-col max-w-full content-center">
             <blockquote className="text-2xl font-semibold italic text-center text-slate-900">
                 You Win
             </blockquote>
-            <button type="button" className="text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:ring-green-300 dark:focus:ring-green-800 shadow-lg shadow-green-500/50 dark:shadow-lg dark:shadow-green-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2" onClick={() => {
+            <button type="button" disabled={disabled} className={cursorNotAllowed + "text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:ring-green-300 dark:focus:ring-green-800 shadow-lg shadow-green-500/50 dark:shadow-lg dark:shadow-green-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2"} onClick={() => {
                 handleBtnClaimClick()
-            }}>Claim</button>
-        </div>;
+            }}>{textButton}</button>
+        </div>;;
     }
 
     function getLayoutLoser() {
@@ -172,7 +195,6 @@ export default function BottomMatchItem({ contranctBet, signer, amountAllow, add
         </button>
     </div>
 
-
     const handleBtnHomeClick = () => {
         if (address == null) {
             return;
@@ -215,6 +237,26 @@ export default function BottomMatchItem({ contranctBet, signer, amountAllow, add
         }
     };
 
+    const approveContract = async () => {
+        if (address == null) {
+            return;
+        }
+        setLoading(true);
+        try {
+            const wei = utils.parseEther('1000.0');
+            let contract = tokenBusd.connect(signer)
+            const tx = await contract?.approve(contractBetAddress, wei)
+            await tx.wait().then(() => {
+                location.reload()
+            }).catch(() => {
+                setLoading(false);
+            });
+        } catch (error) {
+            setLoading(false);
+        }
+
+    }
+
     const handleBtnClaimClick = async () => {
         if (address == null) {
             return;
@@ -231,7 +273,6 @@ export default function BottomMatchItem({ contranctBet, signer, amountAllow, add
                 setLoading(false);
             });
         } catch (error) {
-            error.data.message
 
             setLoading(false);
             isShowError(true);

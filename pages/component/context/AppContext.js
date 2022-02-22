@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { contractBetAbi, contractBetAddress, tokenAbi, yoTokenAddress } from "../constants/constants";
+import { contractBetAbi, contractBetAddress, tokenAbi, busdTokenAddress } from "../constants/constants";
 
 const AppContext = createContext({});
 
@@ -18,10 +18,9 @@ export function AppWrapper({ children }) {
         if (window.ethereum) {
             let _etherWeb3 = new ethers.providers.Web3Provider(window.ethereum, "any");
             setEtherWeb3(_etherWeb3);
-            if (window.ethereum.networkVersion !== 97) {
+            if (window.ethereum.networkVersion !== 56) {
                 checkSwitchNetwork();
             }
-            console.log(window.ethereum.networkVersion, 'window.ethereum.networkVersion');
         } else {
             console.error("Not Install Metamask");
         }
@@ -46,9 +45,9 @@ export function AppWrapper({ children }) {
             console.log("Error Error", error);
         }
 
-        var url = "https://data-seed-prebsc-1-s1.binance.org:8545/"
+        var url = "https://bsc-dataseed.binance.org/"
         const provider = new ethers.providers.JsonRpcProvider(url);
-        const contract = new ethers.Contract(yoTokenAddress, tokenAbi, provider)
+        const contract = new ethers.Contract(busdTokenAddress, tokenAbi, provider)
         setTokenBusd(contract)
         const contractBet = new ethers.Contract(contractBetAddress, contractBetAbi, provider)
         setContranctBet(contractBet)
@@ -91,7 +90,7 @@ export function AppWrapper({ children }) {
         try {
             await window.ethereum.request({
                 method: 'wallet_switchEthereumChain',
-                params: [{ chainId: '0x61' }], // chainId must be in hexadecimal numbers
+                params: [{ chainId: '0x38' }], // chainId must be in hexadecimal numbers
             });
         } catch (error) {
             if (error.code === 4902) {
@@ -100,8 +99,8 @@ export function AppWrapper({ children }) {
                         method: 'wallet_addEthereumChain',
                         params: [
                             {
-                                chainId: '0x61',
-                                rpcUrl: 'https://data-seed-prebsc-1-s1.binance.org:8545/',
+                                chainId: '0x38',
+                                rpcUrl: 'https://bsc-dataseed.binance.org/',
                             },
                         ],
                     });

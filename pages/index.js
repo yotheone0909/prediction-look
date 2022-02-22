@@ -18,9 +18,9 @@ export default function Home() {
       <Nav />
       <Content>
         <NavContent>
-          <NavItem href="/new" isActive>New Releases</NavItem>
-          <NavItem href="/top">Top Rated</NavItem>
-          <NavItem href="/picks">Vincent’s Picks</NavItem>
+          <NavItem href="" isActive>New Releases</NavItem>
+          <NavItem>Live</NavItem>
+          <NavItem>My Prediction</NavItem>
         </NavContent>
         <CardMatch />
       </Content>

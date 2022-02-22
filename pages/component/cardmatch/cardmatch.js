@@ -55,7 +55,7 @@ export default function CardMatch() {
         }
 
         const predicsSort = preditcsNew.sort((a, b) => {
-            return a.timeLockPrediction < epoch ? 1 : -1
+            return a.timeLockPrediction < b.timeLockPrediction ? 1 : -1
         });
 
         setPredicts(predicsSort)
