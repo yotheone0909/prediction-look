@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react"
-import { contractBetAddress, getTeams, teams } from "../../../component/constants/constants";
-import { useAppContext } from "../../../context/AppContext";
+import { contractBetAddress, getTeams, teams } from "../constants/constants";
+import { useAppContext } from "../../context/AppContext";
 import { utils } from "ethers";
-import UserPrediction from "../../../model/UserPrediction";
+import UserPrediction from "../../model/UserPrediction";
 import BottomMatchItem from "./BottomMatchItem";
 
 export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRoundIds }) {
