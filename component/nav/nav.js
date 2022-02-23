@@ -7,8 +7,6 @@ export default function Nav()
   const { connect, address, predicts } = useAppContext();
   const [users, setUsers] = useState(0);
 
-  console.log(address);
-
   function connectToMetamask()
   {
     connect()

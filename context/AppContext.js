@@ -62,13 +62,11 @@ export function AppWrapper({ children }) {
             connect: async () => {
                 try {
                     // const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-
-                    await etherWeb3.send("eth_requestAccounts", []).then(() => {
-                        console.log("eth_requestAccounts");
-                    }).catch(() => {
-                        console.log("No Login");
-                    });
-                    // let addresses = await etherWeb3.listAccounts()
+                    if (!window.ethereum) {
+                        console.error("Not Install Metamask");
+                        return;
+                    }
+                    await etherWeb3.send("eth_requestAccounts", [])
 
                     setAddress(accounts[0])
 

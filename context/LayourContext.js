@@ -6,9 +6,6 @@ export function LayoutContext({ children }) {
 
     const [modalError, setModalError] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    
-    console.log("modalError", modalError);
-    console.log("isLoading", isLoading);
 
     const values = useMemo(() => {
         return {

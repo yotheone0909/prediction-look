@@ -11,9 +11,6 @@ export default function CardMatch() {
     const [predicts, setPredicts] = useState([])
     const [roundIds, setRoundIds] = useState([])
 
-    console.log("roundIds", roundIds);
-    console.log("predicts", predicts);
-
     useEffect(() => {
 
         const callRound = async () => {
@@ -32,10 +29,6 @@ export default function CardMatch() {
 
     const getRoundsDetail = async () => {
         const matchs = await contranctBet.getRoundOnRun()
-
-        // const matchRounds = await contranctBet.getUserRound(address)
-
-        // console.log("matchRounds123", matchRounds.toString())
 
         setPredicts([])
         const preditcsNew = []
