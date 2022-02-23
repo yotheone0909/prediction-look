@@ -5,11 +5,11 @@ import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import styles from '../styles/Home.module.css'
 import CardMatch from './component/cardmatch/Cardmatch'
 import Content from './component/Content'
-import { AppWrapper, useAppContext } from './component/context/AppContext'
+import { AppWrapper, useAppContext } from '../context/AppContext'
 import Nav from './component/nav/Nav'
 import NavContent from './component/nav/NavContent'
 import NavItem from './component/nav/NavItem'
-import ShowLoading from './component/loading/ShowLoading'
+import ShowLoading from '../component/loading/ShowLoading'
 
 export default function Home() {
   return (

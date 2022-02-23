@@ -1,7 +1,7 @@
 import { utils } from "ethers";
 import { useRef, useState } from "react";
-import { contractBetAddress } from "../constants/constants";
-import { useLayoutContext } from "../context/LayourContext";
+import { contractBetAddress } from "../../../component/constants/Constants";
+import { useLayoutContext } from "../../../context/LayourContext";
 
 export default function BottomMatchItem({ contranctBet, tokenBusd, signer, amountAllow, address, isLive, isMatchEnd, isApprove, userPrediction, predictionModel, matchRoundIds }) {
 

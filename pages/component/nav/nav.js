@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 import { useEffect, useState } from "react";
-import { AppWrapper, connectToMetamask, log, useAppContext } from "../context/AppContext"
+import { AppWrapper, connectToMetamask, log, useAppContext } from "../../../context/AppContext"
 
 export default function Nav()
 {

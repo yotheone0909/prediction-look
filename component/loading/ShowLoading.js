@@ -1,6 +1,6 @@
-import { useLayoutContext } from "../context/LayourContext";
+import { useLayoutContext } from "../../context/LayourContext";
 import Lottie from "react-lottie";
-import animationData from "../../lotties/test";
+import animationData from "../../pages/lotties/test.json";
 
 export default function ShowLoading() {
   const defaultOptions = {

@@ -1,6 +1,6 @@
 import '../styles/globals.css'
-import { AppWrapper } from './component/context/AppContext'
-import { LayoutContext } from './component/context/LayourContext'
+import { AppWrapper } from '../context/AppContext'
+import { LayoutContext } from '../context/LayourContext'
 
 function MyApp({ Component, pageProps }) {
   return <AppWrapper>

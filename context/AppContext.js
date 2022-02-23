@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { contractBetAbi, contractBetAddress, tokenAbi, busdTokenAddress } from "../constants/constants";
+import { contractBetAbi, contractBetAddress, tokenAbi, busdTokenAddress } from "../component/constants/Constants";
 
 const AppContext = createContext({});
 

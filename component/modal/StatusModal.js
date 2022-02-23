@@ -1,4 +1,4 @@
-import { useLayoutContext } from "../context/LayourContext";
+import { useLayoutContext } from "../../context/LayourContext";
 
 export default function StatusModal() {
 
