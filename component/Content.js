@@ -1,4 +1,4 @@
-import StatusModal from "../../component/modal/StatusModal";
+import StatusModal from "../component/modal/StatusModal";
 
 
 export default function Content({ children }) {
