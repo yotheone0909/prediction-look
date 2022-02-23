@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 import { useEffect, useState } from "react";
-import { AppWrapper, connectToMetamask, log, useAppContext } from "../../../context/AppContext"
+import { useAppContext } from "../../context/AppContext"
 
 export default function Nav()
 {
@@ -38,8 +38,7 @@ export default function Nav()
           </a>
         </div>
         <div>
-
-          <button className="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-teal-500 hover:bg-white mt-4 lg:mt-0" onClick={() =>
+        <button type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-3 md:mr-0 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" onClick={() =>
             connectToMetamask()
           }>{address ? address : "Connect"}</button>
         </div>
