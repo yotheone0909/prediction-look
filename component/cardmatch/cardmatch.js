@@ -68,7 +68,7 @@ export default function CardMatch() {
 
     return (
         <>
-            <div className="grid grid-cols-4 gap-4 shadow-md">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 justify-items-center gap-4 shadow-md">
                 {predicts?.map((predict) => (
                     <MatchItem key={predict.roundId} predictionModel={predict} getRoundsDetailFn={getRoundsDetail} matchRoundIds={roundIds} />
                 ))}

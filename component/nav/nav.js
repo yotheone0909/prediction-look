@@ -2,14 +2,20 @@ import { ethers } from "ethers";
 import { useEffect, useState } from "react";
 import { useAppContext } from "../../context/AppContext"
 
-export default function Nav()
-{
+export default function Nav() {
   const { connect, address, predicts } = useAppContext();
   const [users, setUsers] = useState(0);
 
-  function connectToMetamask()
-  {
+  function connectToMetamask() {
     connect()
+  }
+
+  function toMaskAddress() {
+    if(address != null) {
+      return address?.substring(0, 5) + "..." + address?.substring(address?.length - 5, address?.length);
+    } else {
+      return "";
+    }
   }
 
   return (
@@ -25,20 +31,11 @@ export default function Nav()
       </div>
       <div className="w-full block flex-grow lg:flex lg:items-center lg:w-auto">
         <div className="text-sm lg:flex-grow">
-          <a href="#responsive-header" className="block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4">
-            Docs
-          </a>
-          <a href="#responsive-header" className="block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4">
-            Examples
-          </a>
-          <a href="#responsive-header" className="block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white">
-            {address}
-          </a>
         </div>
         <div>
-        <button type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-3 md:mr-0 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" onClick={() =>
+          <button type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-3 md:mr-0 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" onClick={() =>
             connectToMetamask()
-          }>{address ? address : "Connect"}</button>
+          }>{address ? toMaskAddress() : "Connect"}</button>
         </div>
       </div>
     </nav>

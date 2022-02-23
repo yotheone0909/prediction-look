@@ -204,7 +204,7 @@ export default function MatchItem({ predictionModel, getRoundsDetailFn, matchRou
 
     return (
         <>
-            <div className={(checkMatchAndClaim() ? "opacity-25" : "") + " max-w-sm rounded-[14px] overflow-hidden shadow-lg shadow-indigo-500/40  bg-white px-4"}>
+            <div className={(checkMatchAndClaim() ? "opacity-25" : "") + " w-full rounded-[14px] overflow-hidden shadow-lg shadow-indigo-500/40  bg-white px-4"}>
                 <div className="flex flex-row">
                     {isMatchEnd ? <blockquote className="md:opacity-100 text-2xl font-semibold italic text-center text-gray-900  mb-4">
                         <span className="before:block before:absolute before:-inset-1 before:-skew-y-3 before:bg-pink-500 relative inline-block">
