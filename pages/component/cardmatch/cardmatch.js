@@ -1,6 +1,6 @@
 import { utils } from "ethers";
 import { useEffect, useState } from "react";
-import Prediction from "../../model/Prediction";
+import Prediction from "../../../model/Prediction";
 import { useAppContext } from "../../../context/AppContext";
 import MatchItem from "./MatchItem";
 
